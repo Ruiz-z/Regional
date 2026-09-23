@@ -1,0 +1,25 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    needs: []
+    steps:
+      - name: Deploy via SSH a la VM de Azure
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          timeout: 20m
+          command_timeout: 20m
+          script: |
+            cd ~/Regional
+            git pull origin main
+            docker compose -f infra/docker-compose.azure.yml up -d --build
