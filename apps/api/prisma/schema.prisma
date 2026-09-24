@@ -3,9 +3,13 @@
 // Convenciones: id uuid, timestamps Timestamptz(3), @@map snake_case plural, enums para estados.
 
 generator client {
-  provider     = "prisma-client"
-  output       = "../src/generated/prisma"
-  moduleFormat = "cjs"
+  provider      = "prisma-client"
+  output        = "../src/generated/prisma"
+  moduleFormat  = "cjs"
+  // "native" para build/test locales; "rhel-openssl-3.0.x" porque el
+  // runtime de funciones Node de Vercel corre sobre Amazon Linux 2, que no
+  // coincide con el motor nativo generado en el contenedor de build.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
