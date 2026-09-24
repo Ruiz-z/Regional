@@ -14,7 +14,8 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: '20'
+  # pnpm@11.3.0 (packageManager en package.json) requiere Node >= 22.13.
+  NODE_VERSION: '22'
 
 jobs:
   checks:

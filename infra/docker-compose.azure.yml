@@ -1,5 +1,4 @@
 # Docker Compose de producción para la VM de Azure.
-# Placeholder: ajustar contexts/dockerfiles cuando existan apps/api, apps/web y apps/vision.
 services:
   postgres:
     image: postgres:16-alpine
@@ -19,8 +18,8 @@ services:
 
   api:
     build:
-      context: ../apps/api
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: apps/api/Dockerfile
       args:
         - NODE_ENV=production
     container_name: smartriego-api
@@ -38,8 +37,8 @@ services:
 
   web:
     build:
-      context: ../apps/web
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: apps/web/Dockerfile
       args:
         - NODE_ENV=production
     container_name: smartriego-web
