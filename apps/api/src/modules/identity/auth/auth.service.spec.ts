@@ -1,4 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
+import type { JwtService } from '@nestjs/jwt';
 import { hash } from 'bcryptjs';
 import { UserRole } from '../../../generated/prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';

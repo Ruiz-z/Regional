@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { loadConfig } from './config/configuration';
 import { IdentityModule } from './modules/identity/identity.module';
+import { ParcelsModule } from './modules/parcels/parcels.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -11,6 +12,7 @@ import { PrismaModule } from './prisma/prisma.module';
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
     PrismaModule,
     IdentityModule,
+    ParcelsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
