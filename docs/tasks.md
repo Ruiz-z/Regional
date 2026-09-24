@@ -56,37 +56,37 @@ Rama: `feature/002-parcelas-zonas` desde `feature/001-autenticacion` (depende de
 ## Devices — Spec 003
 Rama: `feature/003-dispositivos-iot` desde `dev`.
 
-- [ ] **BE-015** — `POST /devices` (Admin): genera key, guarda hash, la devuelve una vez. RF-1.
-- [ ] **BE-016** — `DeviceKeyGuard` (`X-Device-Key`) para endpoints de ingestión. RF-2, RF-3.
-- [ ] **BE-017** — Revocar/regenerar key. RF-4.
-- [ ] **BE-018** — Online/offline por `lastSeenAt` (>5 min). RF-5.
+- [x] **BE-015** — `POST /devices` (Admin): genera key, guarda hash, la devuelve una vez. RF-1.
+- [x] **BE-016** — `DeviceKeyGuard` (`X-Device-Key`) para endpoints de ingestión. RF-2, RF-3.
+- [x] **BE-017** — Revocar/regenerar key. RF-4.
+- [x] **BE-018** — Online/offline por `lastSeenAt` (>5 min). RF-5.
   Hecho cuando: sin key/con key inválida/revocada → 401 sin persistir; key vieja tras regenerar → 401; dispositivo sin lecturas recientes → offline en `GET /devices`.
 
 ## Weather (parte de la spec de riego)
 Rama: `feature/004-riego-inteligente` desde `dev`.
 
-- [ ] **BE-019** — Cliente OpenWeather con cache en memoria de 10 min por parcela.
-- [ ] **BE-020** — Fallback si OpenWeather falla (no tumba el request que lo llama).
+- [x] **BE-019** — Cliente OpenWeather con cache en memoria de 10 min por parcela.
+- [x] **BE-020** — Fallback si OpenWeather falla (no tumba el request que lo llama).
   Hecho cuando: 2 llamadas en 10 min = 1 solo request HTTP real; con el cliente mockeado a fallar, devuelve `null` en vez de lanzar.
 
 ## Irrigation — Spec 004
 Rama: `feature/004-riego-inteligente` desde `dev` (misma que Weather).
 
-- [ ] **BE-021** — `POST /readings` (`DeviceKeyGuard`): valida rango 0-100%, persiste. RF-1.
-- [ ] **BE-022** — Motor de decisión: humedad vs. umbral + pronóstico + score de modelo (stub el score por ahora). RF-2, RF-3.
-- [ ] **BE-023** — Respuesta de `/readings` con `{decision, durationMinutes?, reason}`. RF-4.
-- [ ] **BE-024** — `POST /irrigation-events` + independencia entre zonas. RF-5, RF-6.
-- [ ] **BE-025** — Corrección por lluvia insuficiente en el ciclo siguiente a un `ESPERAR` por lluvia. RF-8.
-- [ ] **BE-026** — Anomalía: 3 `REGAR` consecutivos sin subir humedad en la misma zona. RF-9.
+- [x] **BE-021** — `POST /readings` (`DeviceKeyGuard`): valida rango 0-100%, persiste. RF-1.
+- [x] **BE-022** — Motor de decisión: humedad vs. umbral + pronóstico + score de modelo (stub el score por ahora). RF-2, RF-3.
+- [x] **BE-023** — Respuesta de `/readings` con `{decision, durationMinutes?, reason}`. RF-4.
+- [x] **BE-024** — `POST /irrigation-events` + independencia entre zonas. RF-5, RF-6.
+- [x] **BE-025** — Corrección por lluvia insuficiente en el ciclo siguiente a un `ESPERAR` por lluvia. RF-8.
+- [x] **BE-026** — Anomalía: 3 `REGAR` consecutivos sin subir humedad en la misma zona. RF-9.
   Hecho cuando: humedad de 150% se descarta; humedad baja→REGAR, alta→ESPERAR, sin pronóstico→decide igual; 2 zonas de una parcela deciden independiente; `ESPERAR` por lluvia + sin mejora → `REGAR` con `correctedForRain=true`; 3 riegos sin mejora → anomalía (2 no la disparan).
 
 ## Pest — Spec 005
 Rama: `feature/005-deteccion-plagas` desde `dev`.
 
-- [ ] **BE-027** — `POST /pest-detections` (`DeviceKeyGuard`) + contador de frames consecutivos por zona. RF-1, RF-2.
-- [ ] **BE-028** — Confirmación a los 3 consecutivos + clasificación Normal/Monitoreo/Intervención. RF-3, RF-4.
-- [ ] **BE-029** — Tratamiento automático en Intervención + cooldown 10 min. RF-5, RF-6, RF-8.
-- [ ] **BE-030** — `POST /zones/:id/treat` (manual): guard rol Agricultor-dueño + guard estado (no Normal) + guard cooldown. RF-9, RF-10.
+- [x] **BE-027** — `POST /pest-detections` (`DeviceKeyGuard`) + contador de frames consecutivos por zona. RF-1, RF-2.
+- [x] **BE-028** — Confirmación a los 3 consecutivos + clasificación Normal/Monitoreo/Intervención. RF-3, RF-4.
+- [x] **BE-029** — Tratamiento automático en Intervención + cooldown 10 min. RF-5, RF-6, RF-8.
+- [x] **BE-030** — `POST /zones/:id/treat` (manual): guard rol Agricultor-dueño + guard estado (no Normal) + guard cooldown. RF-9, RF-10.
   Hecho cuando: frame sin detección resetea contador; 3er consecutivo confirma; Intervención dispara tratamiento automático y un 2do a los 5 min no; endpoint manual → 403 Admin, 400/409 zona Normal, 409 cooldown, 201+`trigger:MANUAL` en el caso correcto.
 
 ## Notifications — Spec 006
