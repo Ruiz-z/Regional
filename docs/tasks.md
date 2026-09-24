@@ -14,9 +14,9 @@ Fase "Tareas" del flujo SDD, a partir de `docs/constitution.md`, las 7 specs en 
 
 ## Bootstrap de repo (antes de abrir cualquier rama de spec)
 
-- [ ] **BE-001** — Crear rama `dev` en GitHub desde `main`; protegerla igual o menos estricta que `main`.
+- [x] **BE-001** — Crear rama `dev` en GitHub desde `main`; protegerla igual o menos estricta que `main`.
   Hecho cuando: `dev` existe en el remoto.
-- [ ] **BE-002** — Editar `.github/workflows/ci.yml`: `branches: [main]` → `branches: [dev, main]` en `pull_request`/`push`.
+- [x] **BE-002** — Editar `.github/workflows/ci.yml`: `branches: [main]` → `branches: [dev, main]` en `pull_request`/`push`.
   Hecho cuando: un PR de una rama `feature/*` hacia `dev` dispara CI.
 
 ---
@@ -26,7 +26,7 @@ Fase "Tareas" del flujo SDD, a partir de `docs/constitution.md`, las 7 specs en 
 ## Bootstrap del backend
 Rama: `feature/000-bootstrap-backend` desde `dev`.
 
-- [ ] **BE-003** — Scaffold de `apps/api` (NestJS+TS), estructura `src/common/`, `src/config/`, `src/prisma/` vacíos.
+- [x] **BE-003** — Scaffold de `apps/api` (NestJS+TS), estructura `src/common/`, `src/config/`, `src/prisma/` vacíos.
   Hecho cuando: `pnpm --filter api start` levanta un Nest app vacío sin errores.
 - [ ] **BE-004** — `schema.prisma` completo con los 9 modelos/enums de `plan.md` + primera migración.
   Hecho cuando: `prisma migrate dev` corre sin error y `prisma studio` muestra las 8 tablas.

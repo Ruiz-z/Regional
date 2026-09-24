@@ -3,3 +3,11 @@ site/shots/
 .env
 .env.*
 !.env.example
+
+# builds
+dist/
+*.tsbuildinfo
+coverage/
+
+# prisma
+apps/api/prisma/*.db
