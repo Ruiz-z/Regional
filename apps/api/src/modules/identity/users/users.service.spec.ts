@@ -28,22 +28,22 @@ describe('UsersService', () => {
     expect(notifications.sendWelcomeEmail).toHaveBeenCalledWith('a@a.com');
   });
 
-  it('hashea la contraseña y asigna AGRICULTOR por defecto', async () => {
+  it('hashea la contraseña y asigna AGRICULTOR por defecto (sin exponerla en la respuesta)', async () => {
+    let createdPasswordHash = '';
     prisma.user.create.mockImplementation(
-      ({ data }: Prisma.UserCreateArgs) => ({
-        id: 'u-1',
-        email: data.email,
-        passwordHash: data.passwordHash,
-        role: data.role,
-      }),
+      ({ data }: Prisma.UserCreateArgs) => {
+        createdPasswordHash = data.passwordHash as string;
+        return { id: 'u-1', email: data.email, role: data.role };
+      },
     );
     const user = await service.create({
       email: 'a@a.com',
       password: '12345678',
     });
     expect(user.role).toBe(UserRole.AGRICULTOR);
-    expect(user.passwordHash).not.toBe('12345678');
-    expect(user.passwordHash).toMatch(/^\$2/);
+    expect(createdPasswordHash).not.toBe('12345678');
+    expect(createdPasswordHash).toMatch(/^\$2/);
+    expect((user as { passwordHash?: string }).passwordHash).toBeUndefined();
   });
 
   it('permite crear con rol explícito', async () => {
