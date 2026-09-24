@@ -24,7 +24,16 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      // src/generated/prisma/** (apps/api): salida de "prisma generate",
+      // que corre como parte de este mismo task. Sin declararla acá, un
+      // "cache hit" de Turbo repite el LOG de una corrida vieja sin volver
+      // a generar los archivos reales (quedan ausentes en el checkout).
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "src/generated/prisma/**"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
