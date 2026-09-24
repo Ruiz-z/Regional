@@ -83,10 +83,10 @@ Rama: `feature/004-riego-inteligente` desde `dev` (misma que Weather).
 ## Pest — Spec 005
 Rama: `feature/005-deteccion-plagas` desde `dev`.
 
-- [ ] **BE-027** — `POST /pest-detections` (`DeviceKeyGuard`) + contador de frames consecutivos por zona. RF-1, RF-2.
-- [ ] **BE-028** — Confirmación a los 3 consecutivos + clasificación Normal/Monitoreo/Intervención. RF-3, RF-4.
-- [ ] **BE-029** — Tratamiento automático en Intervención + cooldown 10 min. RF-5, RF-6, RF-8.
-- [ ] **BE-030** — `POST /zones/:id/treat` (manual): guard rol Agricultor-dueño + guard estado (no Normal) + guard cooldown. RF-9, RF-10.
+- [x] **BE-027** — `POST /pest-detections` (`DeviceKeyGuard`) + contador de frames consecutivos por zona. RF-1, RF-2.
+- [x] **BE-028** — Confirmación a los 3 consecutivos + clasificación Normal/Monitoreo/Intervención. RF-3, RF-4.
+- [x] **BE-029** — Tratamiento automático en Intervención + cooldown 10 min. RF-5, RF-6, RF-8.
+- [x] **BE-030** — `POST /zones/:id/treat` (manual): guard rol Agricultor-dueño + guard estado (no Normal) + guard cooldown. RF-9, RF-10.
   Hecho cuando: frame sin detección resetea contador; 3er consecutivo confirma; Intervención dispara tratamiento automático y un 2do a los 5 min no; endpoint manual → 403 Admin, 400/409 zona Normal, 409 cooldown, 201+`trigger:MANUAL` en el caso correcto.
 
 ## Notifications — Spec 006

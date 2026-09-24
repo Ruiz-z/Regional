@@ -75,7 +75,11 @@ describe('Irrigation (integración)', () => {
     const parcelRes = await request(app.getHttpServer())
       .post('/parcels')
       .set('Authorization', `Bearer ${tokenAgro}`)
-      .send({ name: 'Parcela riego', location: 'Guanajuato, MX', crop: 'maíz' });
+      .send({
+        name: 'Parcela riego',
+        location: 'Guanajuato, MX',
+        crop: 'maíz',
+      });
     parcelId = (parcelRes.body as ParcelBody).id;
 
     const zoneRes = await request(app.getHttpServer())
@@ -163,9 +167,9 @@ describe('Irrigation (integración)', () => {
     );
 
     const second = await readAndReport(10);
-    expect(
-      (second.body as { anomalyDetected: boolean }).anomalyDetected,
-    ).toBe(false);
+    expect((second.body as { anomalyDetected: boolean }).anomalyDetected).toBe(
+      false,
+    );
 
     const third = await readAndReport(9);
     expect((third.body as { anomalyDetected: boolean }).anomalyDetected).toBe(
