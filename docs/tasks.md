@@ -65,19 +65,19 @@ Rama: `feature/003-dispositivos-iot` desde `dev`.
 ## Weather (parte de la spec de riego)
 Rama: `feature/004-riego-inteligente` desde `dev`.
 
-- [ ] **BE-019** — Cliente OpenWeather con cache en memoria de 10 min por parcela.
-- [ ] **BE-020** — Fallback si OpenWeather falla (no tumba el request que lo llama).
+- [x] **BE-019** — Cliente OpenWeather con cache en memoria de 10 min por parcela.
+- [x] **BE-020** — Fallback si OpenWeather falla (no tumba el request que lo llama).
   Hecho cuando: 2 llamadas en 10 min = 1 solo request HTTP real; con el cliente mockeado a fallar, devuelve `null` en vez de lanzar.
 
 ## Irrigation — Spec 004
 Rama: `feature/004-riego-inteligente` desde `dev` (misma que Weather).
 
-- [ ] **BE-021** — `POST /readings` (`DeviceKeyGuard`): valida rango 0-100%, persiste. RF-1.
-- [ ] **BE-022** — Motor de decisión: humedad vs. umbral + pronóstico + score de modelo (stub el score por ahora). RF-2, RF-3.
-- [ ] **BE-023** — Respuesta de `/readings` con `{decision, durationMinutes?, reason}`. RF-4.
-- [ ] **BE-024** — `POST /irrigation-events` + independencia entre zonas. RF-5, RF-6.
-- [ ] **BE-025** — Corrección por lluvia insuficiente en el ciclo siguiente a un `ESPERAR` por lluvia. RF-8.
-- [ ] **BE-026** — Anomalía: 3 `REGAR` consecutivos sin subir humedad en la misma zona. RF-9.
+- [x] **BE-021** — `POST /readings` (`DeviceKeyGuard`): valida rango 0-100%, persiste. RF-1.
+- [x] **BE-022** — Motor de decisión: humedad vs. umbral + pronóstico + score de modelo (stub el score por ahora). RF-2, RF-3.
+- [x] **BE-023** — Respuesta de `/readings` con `{decision, durationMinutes?, reason}`. RF-4.
+- [x] **BE-024** — `POST /irrigation-events` + independencia entre zonas. RF-5, RF-6.
+- [x] **BE-025** — Corrección por lluvia insuficiente en el ciclo siguiente a un `ESPERAR` por lluvia. RF-8.
+- [x] **BE-026** — Anomalía: 3 `REGAR` consecutivos sin subir humedad en la misma zona. RF-9.
   Hecho cuando: humedad de 150% se descarta; humedad baja→REGAR, alta→ESPERAR, sin pronóstico→decide igual; 2 zonas de una parcela deciden independiente; `ESPERAR` por lluvia + sin mejora → `REGAR` con `correctedForRain=true`; 3 riegos sin mejora → anomalía (2 no la disparan).
 
 ## Pest — Spec 005
