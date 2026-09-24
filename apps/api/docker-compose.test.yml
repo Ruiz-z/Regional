@@ -1,0 +1,20 @@
+# Postgres de integración/pruebas. Mismo contenedor/nombre/usuario que ci.yml espera.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smartriego-postgres-test
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: smartriego
+      POSTGRES_PASSWORD: smartriego
+      POSTGRES_DB: smartriego_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartriego -d smartriego_test"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  smartriego_postgres_test_data:

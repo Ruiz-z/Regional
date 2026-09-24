@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfil — SmartRiego MX</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/bundle.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="page">
+  <div class="sidebar">
+  <div class="brand">SmartRiego MX</div>
+  <div style="display:flex;flex-direction:column;gap:2px;"><a href="dashboard.html" class="navlink">Dashboard</a><a href="parcela.html" class="navlink">Mis parcelas</a><a href="gestion-parcelas.html" class="navlink">Gestionar parcelas y zonas</a><a href="historico.html" class="navlink">Histórico y reportes</a><a href="perfil.html" class="navlink active">Perfil</a></div>
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;border-top:1px solid rgba(223,223,212,0.16);padding-top:16px;"></div>
+</div>
+  <div class="main">
+    <div style="padding:20px 32px;border-bottom:1px solid var(--border);">
+      <a href="dashboard.html" class="back">← Volver al dashboard</a>
+      <h1 class="h1" style="margin-top:6px;">Perfil</h1>
+      <p class="sub">Ana Torres · Agricultor</p>
+    </div>
+    <div class="content" style="max-width:520px;">
+      <div class="panel" style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:52px;height:52px;border-radius:999px;background:var(--primary);color:var(--on-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;">AT</div>
+          <div><div style="font-size:16px;font-weight:700;">Ana Torres</div><div style="font-size:13px;color:var(--ink-muted);">Agricultor · 2 parcelas asignadas</div></div>
+        </div>
+        <div class="sr-field"><label for="p-name">Nombre</label><input id="p-name" type="text" value="Ana Torres"></div>
+        <div class="sr-field"><label for="p-email">Correo</label><input id="p-email" type="email" value="ana.torres@smartriego.mx"></div>
+        <button type="button" class="sr-btn sr-btn-primary" style="align-self:flex-start;">Guardar cambios</button>
+        <div style="border-top:1px solid var(--border);padding-top:16px;display:flex;flex-direction:column;gap:8px;">
+          <div class="sr-field"><label>Contraseña</label><div style="font-family:var(--font-mono);font-size:15px;color:var(--ink-muted);">••••••••••</div></div>
+          <button type="button" id="pw-reset-btn" class="sr-btn sr-btn-secondary" style="align-self:flex-start;" onclick="document.getElementById('pw-reset-msg').style.display='flex'; this.style.display='none';">Recuperar contraseña</button>
+          <div id="pw-reset-msg" style="display:none;align-items:center;gap:8px;font-size:13px;color:var(--ink-muted);"><svg class="sr-icon" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Te enviamos un correo a ana.torres@smartriego.mx con instrucciones para restablecer tu contraseña.</div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top:20px;display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:700;">Notificaciones</div>
+        <label style="display:flex;align-items:center;gap:10px;font-size:14px;"><input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--primary);">Recibir alertas críticas por correo</label>
+        <label style="display:flex;align-items:center;gap:10px;font-size:14px;"><input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--primary);">Recibir notificaciones informativas</label>
+      </div>
+      <a href="index.html" class="sr-btn sr-btn-secondary" style="margin-top:20px;text-decoration:none;display:inline-flex;">Cerrar sesión</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

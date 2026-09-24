@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestión de parcelas y zonas — SmartRiego MX</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/bundle.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="page">
+  <div class="sidebar">
+  <div class="brand">SmartRiego MX</div>
+  <div style="display:flex;flex-direction:column;gap:2px;"><a href="dashboard.html" class="navlink">Dashboard</a><a href="parcela.html" class="navlink">Mis parcelas</a><a href="gestion-parcelas.html" class="navlink active">Gestionar parcelas y zonas</a><a href="historico.html" class="navlink">Histórico y reportes</a><a href="perfil.html" class="navlink">Perfil</a></div>
+  <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px;border-top:1px solid rgba(223,223,212,0.16);padding-top:16px;"></div>
+</div>
+  <div class="main">
+    <div class="topbar">
+      <div><h1 class="h1">Mis parcelas y zonas</h1><p class="sub">2 parcelas · 12 zonas</p></div>
+      <button type="button" class="sr-btn sr-btn-primary" style="" onclick="document.getElementById('newparcela').style.display='flex'; this.style.display='none';">+ Nueva parcela</button>
+    </div>
+    <div class="content">
+      <div id="newparcela" class="panel" style="display:none;border:2px solid var(--primary);flex-direction:column;gap:14px;">
+        <div style="font-size:15px;font-weight:700;">Nueva parcela creada</div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div><div class="stat-label">NOMBRE</div><div style="font-size:14px;font-weight:600;margin-top:2px;">Parcela Este</div></div>
+          <div><div class="stat-label">UBICACIÓN</div><div style="font-size:14px;font-weight:600;margin-top:2px;">Ensenada, BC</div></div>
+          <div><div class="stat-label">CULTIVO</div><div style="font-size:14px;font-weight:600;margin-top:2px;">Vid</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-size:16px;font-weight:700;">Parcela Norte</div>
+          <button type="button" class="sr-btn sr-btn-secondary" style="" onclick="document.getElementById('newzona-norte').style.display='flex'; this.style.display='none';" id="newzonabtn-norte">+ Nueva zona</button>
+        </div>
+        <div id="newzona-norte" class="panel" style="display:none;border:2px solid var(--primary);flex-direction:column;gap:12px;margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:700;">Nueva zona</div>
+          <div class="sr-field"><label for="nz-name">Nombre</label><input id="nz-name" type="text" value="Zona A4"></div>
+          <div class="sr-field"><label for="nz-thr">Umbral objetivo</label><input id="nz-thr" type="text" value="45%"></div>
+          <div style="display:flex;justify-content:flex-end;"><button type="button" class="sr-btn sr-btn-primary" style="" onclick="document.getElementById('newzona-norte').style.display='none'; document.getElementById('newzonabtn-norte').style.display='';">Guardar</button></div>
+        </div>
+        <div class="drow dhead" style="grid-template-columns:1fr 1fr auto;"><div>ZONA</div><div>UMBRAL OBJETIVO</div><div></div></div>
+        <div class="drow" style="grid-template-columns:1fr 1fr auto;align-items:center;"><div style="font-weight:700;">Zona A1</div><div style="color:var(--ink-muted);">45%</div><button type="button" class="sr-btn sr-btn-secondary" style="padding:4px 10px;font-size:13px;" onclick="document.getElementById('edit-a1').style.display='flex'; this.style.display='none';" id="editbtn-a1">Editar</button></div>
+        <div id="edit-a1" class="panel" style="display:none;border:1.5px solid var(--border-strong);flex-direction:row;align-items:flex-end;gap:12px;margin:-4px 0 8px;">
+          <div class="sr-field" style="flex:1;"><label for="a1-thr">Umbral objetivo</label><input id="a1-thr" type="text" value="45%"></div>
+          <button type="button" class="sr-btn sr-btn-primary" style="" onclick="document.getElementById('edit-a1').style.display='none'; document.getElementById('editbtn-a1').style.display='';">Guardar</button>
+        </div>
+        <div class="drow" style="grid-template-columns:1fr 1fr auto;align-items:center;"><div style="font-weight:700;">Zona B3</div><div style="color:var(--ink-muted);">45%</div><button type="button" class="sr-btn sr-btn-secondary" style="padding:4px 10px;font-size:13px;" onclick="document.getElementById('edit-b3').style.display='flex'; this.style.display='none';" id="editbtn-b3">Editar</button></div>
+        <div id="edit-b3" class="panel" style="display:none;border:1.5px solid var(--border-strong);flex-direction:row;align-items:flex-end;gap:12px;margin:-4px 0 0;">
+          <div class="sr-field" style="flex:1;"><label for="b3-thr">Umbral objetivo</label><input id="b3-thr" type="text" value="45%"></div>
+          <button type="button" class="sr-btn sr-btn-primary" style="" onclick="document.getElementById('edit-b3').style.display='none'; document.getElementById('editbtn-b3').style.display='';">Guardar</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-size:16px;font-weight:700;">Parcela Sur</div>
+          <button type="button" class="sr-btn sr-btn-secondary" style="" onclick="document.getElementById('newzona-sur').style.display='flex'; this.style.display='none';" id="newzonabtn-sur">+ Nueva zona</button>
+        </div>
+        <div id="newzona-sur" class="panel" style="display:none;border:2px solid var(--primary);flex-direction:column;gap:12px;margin-bottom:12px;">
+          <div style="font-size:14px;font-weight:700;">Nueva zona</div>
+          <div class="sr-field"><label for="nzs-name">Nombre</label><input id="nzs-name" type="text" value="Zona C7"></div>
+          <div class="sr-field"><label for="nzs-thr">Umbral objetivo</label><input id="nzs-thr" type="text" value="40%"></div>
+          <div style="display:flex;justify-content:flex-end;"><button type="button" class="sr-btn sr-btn-primary" style="" onclick="document.getElementById('newzona-sur').style.display='none'; document.getElementById('newzonabtn-sur').style.display='';">Guardar</button></div>
+        </div>
+        <div class="drow dhead" style="grid-template-columns:1fr 1fr auto;"><div>ZONA</div><div>UMBRAL OBJETIVO</div><div></div></div>
+        <div class="drow" style="grid-template-columns:1fr 1fr auto;align-items:center;"><div style="font-weight:700;">Zona C6</div><div style="color:var(--ink-muted);">40%</div><button type="button" class="sr-btn sr-btn-secondary" style="padding:4px 10px;font-size:13px;" onclick="document.getElementById('edit-c6').style.display='flex'; this.style.display='none';" id="editbtn-c6">Editar</button></div>
+        <div id="edit-c6" class="panel" style="display:none;border:1.5px solid var(--border-strong);flex-direction:row;align-items:flex-end;gap:12px;margin:-4px 0 0;">
+          <div class="sr-field" style="flex:1;"><label for="c6-thr">Umbral objetivo</label><input id="c6-thr" type="text" value="40%"></div>
+          <button type="button" class="sr-btn sr-btn-primary" style="" onclick="document.getElementById('edit-c6').style.display='none'; document.getElementById('editbtn-c6').style.display='';">Guardar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

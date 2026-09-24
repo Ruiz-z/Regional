@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [dev, main]
   push:
-    branches: [main]
+    branches: [dev, main]
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -65,6 +65,8 @@ jobs:
   integration-tests:
     name: Integration tests (Postgres real)
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://smartriego:smartriego@localhost:5432/smartriego_test
     steps:
       - uses: actions/checkout@v4
 

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Perfil — SmartRiego MX</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/smartriego/tokens.css">
+<link rel="stylesheet" href="ds/smartriego/components/bundle.css">
+<script src="ds/smartriego/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans)}
+.navlink{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);font-size:14px;font-weight:600;color:var(--ink-on-inverse);text-decoration:none;opacity:.72}
+.navlink.active{background:rgba(223,223,212,0.12);opacity:1}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:20px;box-sizing:border-box}
+.sr-field{display:flex;flex-direction:column;gap:6px}
+.sr-field label{font-size:14px;font-weight:600;color:var(--ink)}
+.sr-field input{font:inherit;font-size:16px;font-family:var(--font-sans);padding:12px 14px;border-radius:var(--radius-md);border:1.5px solid var(--border-strong);background:var(--surface);color:var(--ink);box-sizing:border-box}
+.sr-field input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; display: flex; background: var(--bg); font-family: var(--font-sans); overflow: hidden;">
+
+  <div style="width: 240px; flex: none; background: var(--surface-inverse); color: var(--ink-on-inverse); display: flex; flex-direction: column; padding: 24px 16px; box-sizing: border-box; gap: 28px;">
+    <div style="font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -.01em; padding: 0 8px;">SmartRiego MX</div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <a href="Main.dc.html" class="navlink">Dashboard</a>
+      <a href="Parcela.dc.html" class="navlink">Mis parcelas</a>
+      <a href="GestionParcelas.dc.html" class="navlink">Gestionar parcelas y zonas</a>
+      <a href="Historico.dc.html" class="navlink">Histórico y reportes</a>
+      <a href="Perfil.dc.html" class="navlink active">Perfil</a>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+
+    <div style="padding: 20px 32px; border-bottom: 1px solid var(--border); flex: none;">
+      <a href="Main.dc.html" style="font-size: 13px; font-weight: 600; color: var(--ink-muted); text-decoration: none;">← Volver al dashboard</a>
+      <h1 style="margin: 6px 0 0; font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--ink);">Perfil</h1>
+      <p style="margin: 4px 0 0; font-size: 14px; color: var(--ink-muted);">Ana Torres · Agricultor</p>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 24px 32px 40px; box-sizing: border-box; max-width: 520px;">
+
+      <div class="panel" style="display: flex; flex-direction: column; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 52px; height: 52px; border-radius: 999px; background: var(--primary); color: var(--on-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px;">AT</div>
+          <div>
+            <div style="font-size: 16px; font-weight: 700;">Ana Torres</div>
+            <div style="font-size: 13px; color: var(--ink-muted);">Agricultor · 2 parcelas asignadas</div>
+          </div>
+        </div>
+        <div class="sr-field"><label for="p-name">Nombre</label><input id="p-name" type="text" value="Ana Torres"></div>
+        <div class="sr-field"><label for="p-email">Correo</label><input id="p-email" type="email" value="ana.torres@smartriego.mx"></div>
+        <div class="sr-field"><label for="p-pass">Contraseña</label><input id="p-pass" type="password" value="••••••••••"></div>
+        <button type="button" class="sr-btn sr-btn-primary" style="align-self: flex-start;">Guardar cambios</button>
+      </div>
+
+      <div class="panel" style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px;">
+        <div style="font-size: 14px; font-weight: 700;">Notificaciones</div>
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 14px;"><input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--primary);">Recibir alertas críticas por correo</label>
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 14px;"><input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--primary);">Recibir notificaciones informativas</label>
+      </div>
+
+      <a href="Login.dc.html" class="sr-btn sr-btn-secondary" style="margin-top: 20px; text-decoration: none; display: inline-flex;">Cerrar sesión</a>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

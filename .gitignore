@@ -1,0 +1,15 @@
+node_modules/
+site/shots/
+.env
+.env.*
+!.env.example
+
+# builds
+dist/
+*.tsbuildinfo
+coverage/
+.next/
+
+# prisma
+apps/api/prisma/*.db
+apps/api/src/generated/

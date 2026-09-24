@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Zona B3 — SmartRiego MX Móvil</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/smartriego/tokens.css">
+<link rel="stylesheet" href="ds/smartriego/components/bundle.css">
+<script src="ds/smartriego/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700&family=Geist+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap");
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans)}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; display: flex; flex-direction: column; background: var(--bg); font-family: var(--font-sans); overflow: hidden;">
+
+  <div style="padding: 16px 16px 0; flex: none;">
+    <x-import component-from-global-scope="SmartRiego.ConnectionBanner" state="synced"></x-import>
+  </div>
+
+  <div style="padding: 14px 20px 8px; flex: none;">
+    <a href="ParcelaMovil.dc.html" style="font-size: 13px; font-weight: 600; color: var(--ink-muted); text-decoration: none;">← Parcela Norte</a>
+    <h1 style="margin: 6px 0 0; font-family: var(--font-display); font-size: 22px; font-weight: 700;">Zona B3</h1>
+    <div style="font-size: 13px; color: var(--ink-muted);">Vid · 0.5 ha</div>
+  </div>
+
+  <div style="flex: 1; overflow-y: auto; padding: 8px 20px 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 16px;">
+
+    <x-import component-from-global-scope="SmartRiego.AlertBanner" title="Foco de plaga confirmado">7 detecciones confirmadas · hace 4 min</x-import>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 18px; display: flex; flex-direction: column; gap: 14px;">
+      <div style="display: flex; align-items: baseline; gap: 8px;">
+        <span style="font-family: var(--font-mono); font-weight: 700; font-size: 34px;">31%</span>
+        <span style="font-size: 13px; color: var(--ink-muted);">/ objetivo 45%</span>
+      </div>
+      <x-import component-from-global-scope="SmartRiego.MoistureBar" value="31" target="45" hide-label="{{yes}}"></x-import>
+      <div style="display: flex; justify-content: space-between; font-size: 14px;">
+        <span style="color: var(--ink-muted); font-weight: 700;">Temperatura</span>
+        <span style="font-family: var(--font-mono); font-weight: 700;">27.4 °C</span>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <x-import component-from-global-scope="SmartRiego.StatusBadge" status="normal" prefix="Riego"></x-import>
+        <x-import component-from-global-scope="SmartRiego.StatusBadge" status="intervencion" prefix="Plaga" label="Intervención · 7"></x-import>
+      </div>
+      <div style="font-size: 12px; color: var(--ink-muted);">El riego es 100% automático: no hay botón de "regar ahora".</div>
+    </div>
+
+    <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 18px;">
+      <div style="font-size: 14px; font-weight: 700; margin-bottom: 10px;">Mini-histórico</div>
+      <x-import component-from-global-scope="SmartRiego.EventTimeline" events="{{ events }}"></x-import>
+    </div>
+
+    <button type="button" class="sr-btn sr-btn-primary" style="justify-content: center;">Marcar como atendida</button>
+
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true,
+      events: [
+        { type: "plaga", title: "Plaga confirmada por cámara", meta: "Hoy 10:05 · 7 detecciones" },
+        { type: "riego", title: "Riego ejecutado", meta: "Hoy 09:40 · 14 min" }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
