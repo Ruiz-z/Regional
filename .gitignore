@@ -13,3 +13,7 @@ coverage/
 # prisma
 apps/api/prisma/*.db
 apps/api/src/generated/
+
+# turbo
+turbo/logs/
+.turbo/
