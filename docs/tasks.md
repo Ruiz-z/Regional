@@ -110,9 +110,9 @@ Rama: `feature/007-historico-reportes` desde `dev`.
 ## Servicio de visión (`apps/vision`)
 Rama: `feature/005-deteccion-plagas-vision` desde `dev` (o incluida en `feature/005-deteccion-plagas` si BE lleva ambas).
 
-- [ ] **BE-039** — Scaffold FastAPI, `requirements.txt`, `/health`, cliente HTTP con la API key del dispositivo hacia `apps/api`.
-- [ ] **BE-040** — Pipeline YOLO mínimo: inferencia sobre un frame de prueba, mapeo a zona por cuadrante fijo.
-- [ ] **BE-041** — Loop: cámara → inferencia → `POST /pest-detections`.
+- [x] **BE-039** — Scaffold FastAPI, `requirements.txt`, `/health`, cliente HTTP con la API key del dispositivo hacia `apps/api`.
+- [x] **BE-040** — Pipeline YOLO mínimo: inferencia sobre un frame de prueba, mapeo a zona por cuadrante fijo.
+- [x] **BE-041** — Loop: cámara → inferencia → `POST /pest-detections`.
   Hecho cuando: `/health` responde 200; imagen de prueba → zona/conteo correctos; corriendo contra backend real, cada frame genera un request registrado.
 
 ---
