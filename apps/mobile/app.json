@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "SmartRiego MX",
+    "slug": "smartriego-mx",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "smartriego",
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F6F5EF"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "mx.smartriego.app",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"]
+      }
+    },
+    "android": {
+      "package": "mx.smartriego.app",
+      "adaptiveIcon": {
+        "foregroundColor": "#F6F5EF",
+        "backgroundColor": "#31410D"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
