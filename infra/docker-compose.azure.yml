@@ -1,0 +1,55 @@
+# Docker Compose de producción para la VM de Azure.
+# Placeholder: ajustar contexts/dockerfiles cuando existan apps/api y apps/web.
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smartriego-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ../apps/api
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: smartriego-api
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    env_file:
+      - ../apps/api/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ../apps/web
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: smartriego-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ../apps/web/.env
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

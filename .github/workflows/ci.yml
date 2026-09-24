@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  checks:
+    name: Lint + Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build (typecheck)
+        run: pnpm build
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Pruebas unitarias
+        run: pnpm test
+
+  # Requiere Postgres real. Ajustar working-directory/nombre del contenedor
+  # una vez que exista apps/api con su docker-compose.test.yml (ver
+  # constitution.md #12: tests obligatorios en motor de decisión, fugas,
+  # paro de emergencia e ingestión de lecturas del ESP32).
+  integration-tests:
+    name: Integration tests (Postgres real)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Instalar dependencias
+        run: pnpm install --frozen-lockfile
+
+      - name: Levantar Postgres de pruebas
+        working-directory: apps/api
+        run: docker compose -f docker-compose.test.yml up -d
+
+      - name: Esperar a que Postgres acepte conexiones
+        run: |
+          for i in $(seq 1 30); do
+            if docker exec smartriego-postgres-test pg_isready -U smartriego -d smartriego_test >/dev/null 2>&1; then
+              echo "Postgres listo"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Postgres no respondió a tiempo" >&2
+          exit 1
+
+      - name: Pruebas de integración
+        working-directory: apps/api
+        run: pnpm run test:integration
+
+      - name: Apagar Postgres de pruebas
+        if: always()
+        working-directory: apps/api
+        run: docker compose -f docker-compose.test.yml down -v
