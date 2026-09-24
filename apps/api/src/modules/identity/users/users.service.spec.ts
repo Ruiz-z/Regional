@@ -30,12 +30,10 @@ describe('UsersService', () => {
 
   it('hashea la contraseña y asigna AGRICULTOR por defecto (sin exponerla en la respuesta)', async () => {
     let createdPasswordHash = '';
-    prisma.user.create.mockImplementation(
-      ({ data }: Prisma.UserCreateArgs) => {
-        createdPasswordHash = data.passwordHash as string;
-        return { id: 'u-1', email: data.email, role: data.role };
-      },
-    );
+    prisma.user.create.mockImplementation(({ data }: Prisma.UserCreateArgs) => {
+      createdPasswordHash = data.passwordHash;
+      return { id: 'u-1', email: data.email, role: data.role };
+    });
     const user = await service.create({
       email: 'a@a.com',
       password: '12345678',

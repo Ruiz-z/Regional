@@ -1,5 +1,21 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  // Turborepo filtra las env vars que no estén acá, aunque el proceso que
+  // lo invoca (CI, Vercel) sí las tenga seteadas — sin esto, tareas como
+  // "prisma generate" (apps/api) no ven DATABASE_URL y fallan aunque el
+  // valor exista en el entorno real.
+  "globalEnv": [
+    "DATABASE_URL",
+    "PORT",
+    "JWT_SECRET",
+    "JWT_EXPIRES_IN",
+    "OPENWEATHER_API_KEY",
+    "OPENWEATHER_BASE_URL",
+    "RESEND_API_KEY",
+    "RESEND_FROM_EMAIL",
+    "NEXT_PUBLIC_API_URL",
+    "NEXT_PUBLIC_AUTH_MOCK"
+  ],
   "tasks": {
     "dev": {
       "dependsOn": ["^build"],
@@ -8,7 +24,7 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "lint": {
       "dependsOn": ["^lint"]
