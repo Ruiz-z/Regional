@@ -90,6 +90,7 @@ describe('Pest (integración)', () => {
   });
 
   afterAll(async () => {
+    await prisma.notification.deleteMany({ where: { zoneId } });
     await prisma.pestTreatment.deleteMany({ where: { zoneId } });
     await prisma.pestDetection.deleteMany({ where: { zoneId } });
     await prisma.parcel.deleteMany({ where: { id: parcelId } });

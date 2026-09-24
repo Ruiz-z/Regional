@@ -8,12 +8,14 @@ import { ParcelsModule } from './modules/parcels/parcels.module';
 import { DevicesModule } from './modules/devices/devices.module';
 import { IrrigationModule } from './modules/irrigation/irrigation.module';
 import { PestModule } from './modules/pest/pest.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [loadConfig] }),
     PrismaModule,
+    NotificationsModule,
     IdentityModule,
     ParcelsModule,
     DevicesModule,
