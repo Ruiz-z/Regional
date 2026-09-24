@@ -4,24 +4,30 @@ import * as React from "react";
 
 import Link from "next/link";
 
-import { useAuth } from "@/shared/auth/auth-context";
+import { AUTH_TOKEN_KEY, useAuth } from "@/shared/auth/auth-context";
+import { apiFetch } from "@/shared/lib/api-client";
 import type { ParcelHistoryReport } from "@/features/reports/types";
 import { getParcelHistory } from "@/features/reports/lib/api";
-import { HISTORY_RANGE } from "@/features/reports/lib/mock-data";
 import { ReportFilters, type ReportFiltersValue } from "@/features/reports/components/report-filters";
 import { ConsumptionChart } from "@/features/reports/components/consumption-chart";
 import { EventTimeline } from "@/features/reports/components/event-timeline";
 
-const PARCELS = [
-  { id: "norte", name: "Parcela Norte" },
-  { id: "sur", name: "Parcela Sur" },
-];
+const RECENT_DAYS = 7;
+
+function isoDate(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+function defaultRange(): { from: string; to: string } {
+  const to = new Date();
+  const from = new Date(to.getTime() - RECENT_DAYS * 24 * 60 * 60 * 1000);
+  return { from: isoDate(from), to: isoDate(to) };
+}
 
 const INITIAL_FILTERS: ReportFiltersValue = {
   parcelId: "all",
   zoneId: "",
-  from: HISTORY_RANGE.from,
-  to: HISTORY_RANGE.to,
+  ...defaultRange(),
 };
 
 export function ReportsView() {
@@ -29,8 +35,25 @@ export function ReportsView() {
   const [filters, setFilters] = React.useState<ReportFiltersValue>(
     INITIAL_FILTERS,
   );
+  const [parcels, setParcels] = React.useState<{ id: string; name: string }[]>(
+    [],
+  );
   const [report, setReport] = React.useState<ParcelHistoryReport | null>(null);
   const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    let alive = true;
+    const authToken = token ?? window.localStorage.getItem(AUTH_TOKEN_KEY);
+    if (!authToken) return;
+    apiFetch<{ id: string; name: string }[]>("/parcels", {}, authToken)
+      .then((result) => {
+        if (alive) setParcels(result);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [token]);
 
   React.useEffect(() => {
     let alive = true;
@@ -78,7 +101,7 @@ export function ReportsView() {
 
       <div className="flex flex-1 flex-col gap-6 px-8 pb-12 pt-6">
         <ReportFilters
-          parcels={PARCELS}
+          parcels={parcels}
           zones={report?.zones ?? []}
           value={filters}
           onChange={setFilters}

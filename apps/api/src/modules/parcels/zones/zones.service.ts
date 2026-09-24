@@ -3,16 +3,21 @@ import { Zone } from '../../../generated/prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateZoneDto } from './dto/create-zone.dto';
 import { UpdateZoneDto } from './dto/update-zone.dto';
+import { ZoneStatusService, ZoneWithStatus } from './zone-status.service';
 
 @Injectable()
 export class ZonesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly zoneStatus: ZoneStatusService,
+  ) {}
 
-  findAll(parcelId: string): Promise<Zone[]> {
-    return this.prisma.zone.findMany({
+  async findAll(parcelId: string): Promise<ZoneWithStatus[]> {
+    const zones = await this.prisma.zone.findMany({
       where: { parcelId },
       orderBy: { createdAt: 'asc' },
     });
+    return this.zoneStatus.attach(zones);
   }
 
   create(parcelId: string, dto: CreateZoneDto): Promise<Zone> {

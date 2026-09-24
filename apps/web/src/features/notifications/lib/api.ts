@@ -7,6 +7,74 @@ import { isMocksEnabled } from "@/features/dashboard/lib/api";
 const NOTIFICATIONS_PATH = "/notifications";
 const READ_STORAGE_KEY = "smartriego-notif-read";
 
+// --- Formas reales de la API ---
+
+type ApiNotificationType = "RAIN_CORRECTION" | "IRRIGATION_ANOMALY" | "PEST_ALERT";
+
+interface ApiNotification {
+  id: string;
+  zoneId: string | null;
+  type: ApiNotificationType;
+  severity: "INFO" | "CRITICAL";
+  read: boolean;
+  createdAt: string;
+}
+
+interface ApiZone {
+  id: string;
+  name: string;
+}
+
+interface ApiParcel {
+  id: string;
+  name: string;
+  zones: ApiZone[];
+}
+
+const TYPE_TITLE: Record<ApiNotificationType, string> = {
+  RAIN_CORRECTION: "Corrección por lluvia insuficiente",
+  IRRIGATION_ANOMALY: "Anomalía de riego",
+  PEST_ALERT: "Foco de plaga confirmado",
+};
+
+function timeAgo(iso: string): string {
+  const minutes = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (minutes < 1) return "hace instantes";
+  if (minutes < 60) return `hace ${minutes} min`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `hace ${hours} h`;
+  return `hace ${Math.round(hours / 24)} d`;
+}
+
+function findParcelAndZone(
+  parcels: ApiParcel[],
+  zoneId: string | null,
+): { parcel: ApiParcel; zone: ApiZone } | null {
+  if (!zoneId) return null;
+  for (const parcel of parcels) {
+    const zone = parcel.zones.find((z) => z.id === zoneId);
+    if (zone) return { parcel, zone };
+  }
+  return null;
+}
+
+function toNotificationItem(
+  notification: ApiNotification,
+  parcels: ApiParcel[],
+): NotificationItem {
+  const match = findParcelAndZone(parcels, notification.zoneId);
+  return {
+    id: notification.id,
+    severity: notification.severity === "CRITICAL" ? "CRITICA" : "INFORMATIVA",
+    read: notification.read,
+    title: match
+      ? `${TYPE_TITLE[notification.type]} · Zona ${match.zone.name}`
+      : TYPE_TITLE[notification.type],
+    meta: `${match ? match.parcel.name : "Sin parcela"} · ${timeAgo(notification.createdAt)}`,
+    parcelId: match?.parcel.id ?? "",
+  };
+}
+
 function loadReadIds(): string[] {
   if (typeof window === "undefined") {
     return [];
@@ -52,20 +120,13 @@ export async function getNotifications(
     throw new Error("No hay sesión activa");
   }
 
-  try {
-    const items = await apiFetch<NotificationItem[]>(
-      NOTIFICATIONS_PATH,
-      {},
-      authToken,
-    );
-    return mergeReadState(items);
-  } catch (error) {
-    console.warn(
-      "Listado de notificaciones real no disponible (endpoint BE-036 pendiente), usando datos de demostración.",
-      error,
-    );
-    return mergeReadState(NOTIFICATIONS_MOCK);
-  }
+  const [notifications, parcels] = await Promise.all([
+    apiFetch<ApiNotification[]>(NOTIFICATIONS_PATH, {}, authToken),
+    apiFetch<ApiParcel[]>("/parcels", {}, authToken).catch(() => []),
+  ]);
+  return mergeReadState(
+    notifications.map((n) => toNotificationItem(n, parcels)),
+  );
 }
 
 export async function markNotificationRead(
@@ -82,16 +143,9 @@ export async function markNotificationRead(
     return;
   }
 
-  try {
-    await apiFetch(
-      `${NOTIFICATIONS_PATH}/${id}/read`,
-      { method: "POST" },
-      authToken,
-    );
-  } catch (error) {
-    console.warn(
-      "No se pudo confirmar la lectura en el servidor; la lectura persiste localmente.",
-      error,
-    );
-  }
+  await apiFetch(
+    `${NOTIFICATIONS_PATH}/${id}/read`,
+    { method: "PATCH" },
+    authToken,
+  );
 }

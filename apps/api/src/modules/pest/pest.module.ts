@@ -8,5 +8,6 @@ import { ZonesTreatController } from './zones-treat.controller';
   imports: [NotificationsModule],
   controllers: [PestDetectionsController, ZonesTreatController],
   providers: [PestService],
+  exports: [PestService],
 })
 export class PestModule {}

@@ -48,6 +48,24 @@ export class PestService {
     return this.getState(zoneId).level;
   }
 
+  // Timestamp del último tratamiento (null si nunca se trató esta zona) —
+  // el mobile calcula el cooldown restante a partir de este valor.
+  getLastTreatmentAt(zoneId: string): Date | null {
+    const { lastTreatmentAt } = this.getState(zoneId);
+    return lastTreatmentAt === null ? null : new Date(lastTreatmentAt);
+  }
+
+  // Cuándo termina el cooldown del tratamiento (null si no hay uno activo)
+  // — lo necesita el front para deshabilitar el botón de tratamiento manual
+  // y mostrar el tiempo restante (spec-005, casos límite).
+  getCooldownUntil(zoneId: string): Date | null {
+    const state = this.getState(zoneId);
+    if (!this.isInCooldown(state)) {
+      return null;
+    }
+    return new Date(state.lastTreatmentAt! + TREATMENT_COOLDOWN_MS);
+  }
+
   async recordDetection(dto: CreatePestDetectionDto): Promise<DetectionResult> {
     const zone = await this.prisma.zone.findUnique({
       where: { id: dto.zoneId },

@@ -1,4 +1,4 @@
-import * as Notifications from "expo-notifications";
+import Notifications from "@/shared/lib/notifications";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, ScrollView } from "react-native";

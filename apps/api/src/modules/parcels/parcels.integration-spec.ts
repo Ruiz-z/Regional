@@ -142,6 +142,23 @@ describe('Parcels (integración)', () => {
     expect(zones.body).toHaveLength(2);
   });
 
+  it('GET /parcels/:id incluye las zonas con su estado (latestReading + pestLevel)', async () => {
+    const res = await request(app.getHttpServer())
+      .get(`/parcels/${parcelAId}`)
+      .set('Authorization', `Bearer ${tokenA}`);
+    expect(res.status).toBe(200);
+    const body = res.body as {
+      id: string;
+      zones: { id: string; latestReading: unknown; pestLevel: string }[];
+    };
+    expect(body.id).toBe(parcelAId);
+    expect(body.zones).toHaveLength(2);
+    expect(body.zones[0]).toMatchObject({
+      latestReading: null,
+      pestLevel: 'NORMAL',
+    });
+  });
+
   it('RF-3: un Agricultor no puede crear zonas en parcela ajena, el Admin sí (403/201)', async () => {
     await expect(
       request(app.getHttpServer())

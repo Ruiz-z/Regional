@@ -1,16 +1,16 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Prisma, UserRole } from '../../../generated/prisma/client';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { NotificationsService } from '../../notifications/notifications.service';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
-  let prisma: { user: { create: jest.Mock } };
+  let prisma: { user: { create: jest.Mock; findUnique: jest.Mock } };
   let notifications: { sendWelcomeEmail: jest.Mock };
   let service: UsersService;
 
   beforeEach(() => {
-    prisma = { user: { create: jest.fn() } };
+    prisma = { user: { create: jest.fn(), findUnique: jest.fn() } };
     notifications = { sendWelcomeEmail: jest.fn() };
     service = new UsersService(
       prisma as unknown as PrismaService,
@@ -72,5 +72,29 @@ describe('UsersService', () => {
     await expect(
       service.create({ email: 'a@a.com', password: '12345678' }),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('findById devuelve el usuario real sin el passwordHash', async () => {
+    prisma.user.findUnique.mockResolvedValue({
+      id: 'u-1',
+      email: 'a@a.com',
+      role: UserRole.AGRICULTOR,
+      expoPushToken: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    const user = await service.findById('u-1');
+    expect(user.email).toBe('a@a.com');
+    expect(prisma.user.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: 'u-1' } }),
+    );
+    expect((user as { passwordHash?: string }).passwordHash).toBeUndefined();
+  });
+
+  it('findById lanza 404 si el usuario no existe', async () => {
+    prisma.user.findUnique.mockResolvedValue(null);
+    await expect(service.findById('bad-id')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 });

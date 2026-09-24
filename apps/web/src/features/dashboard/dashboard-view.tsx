@@ -41,7 +41,7 @@ export function DashboardView() {
   const [data, setData] = React.useState<DashboardData | null>(null);
   const [error, setError] = React.useState<string | null>(null);
   const [selectedParcelId, setSelectedParcelId] =
-    React.useState<string>("norte");
+    React.useState<string>("todas");
 
   React.useEffect(() => {
     let alive = true;

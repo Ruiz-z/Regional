@@ -36,7 +36,15 @@ export function ThemeProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [theme, setThemeState] = React.useState<Theme>(getInitialTheme);
+  // Estado inicial fijo ("light") para que el primer render del cliente
+  // coincida con el HTML del servidor (que no tiene window/localStorage) —
+  // evita el mismatch de hidratación. El tema real se aplica después del
+  // montaje, en el efecto de abajo.
+  const [theme, setThemeState] = React.useState<Theme>("light");
+
+  React.useEffect(() => {
+    setThemeState(getInitialTheme());
+  }, []);
 
   React.useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);

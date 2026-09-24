@@ -30,6 +30,6 @@ export class UsersController {
 
   @Get('me')
   me(@CurrentUser() user: AuthUser) {
-    return user;
+    return this.usersService.findById(user.userId);
   }
 }
