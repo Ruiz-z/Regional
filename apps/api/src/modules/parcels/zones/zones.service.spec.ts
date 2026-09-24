@@ -24,7 +24,10 @@ describe('ZonesService', () => {
         delete: jest.fn(),
       },
     };
-    service = new ZonesService(prisma as unknown as PrismaService);
+    service = new ZonesService(
+      prisma as unknown as PrismaService,
+      { attach: (zones: unknown) => Promise.resolve(zones) } as never,
+    );
   });
 
   it('crea la zona asociada a la parcela', async () => {

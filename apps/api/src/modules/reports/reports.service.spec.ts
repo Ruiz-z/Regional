@@ -92,6 +92,24 @@ describe('ReportsService', () => {
     expect(result.totals.minutesBaseline).toBe(40);
   });
 
+  it('incluye las lecturas de humedad crudas de la zona en el rango (para graficar)', async () => {
+    prisma.zone.findMany.mockResolvedValue([
+      {
+        id: 'zone-a',
+        name: 'Zona A',
+        readings: [
+          { humidity: 40, temperature: 20, createdAt: from },
+          { humidity: 45, temperature: 21, createdAt: to },
+        ],
+        irrigationEvents: [],
+        pestDetections: [],
+        pestTreatments: [],
+      },
+    ]);
+    const result = await service.getHistory('parcel-1', from, to);
+    expect(result.zones[0].readings).toHaveLength(2);
+  });
+
   it('RF-2: filtra eventos por rango de fechas vía prisma (where gte/lte)', async () => {
     await service.getHistory('parcel-1', from, to);
     expect(prisma.zone.findMany).toHaveBeenCalledWith(

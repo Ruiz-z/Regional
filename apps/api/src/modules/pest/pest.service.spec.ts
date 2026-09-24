@@ -134,4 +134,33 @@ describe('PestService', () => {
       /cooldown/,
     );
   });
+
+  it('getCooldownUntil: null si nunca se trató la zona', () => {
+    expect(service.getCooldownUntil('zone-a')).toBeNull();
+  });
+
+  it('getCooldownUntil: fecha futura mientras dura el cooldown tras tratar', async () => {
+    await detect(2);
+    await detect(2);
+    await detect(2);
+    await service.treatManually('zone-a', 'user-1');
+    const until = service.getCooldownUntil('zone-a');
+    expect(until).not.toBeNull();
+    expect(until!.getTime()).toBeGreaterThan(Date.now());
+  });
+
+  it('getLastTreatmentAt: null si nunca se trató la zona', () => {
+    expect(service.getLastTreatmentAt('zone-a')).toBeNull();
+  });
+
+  it('getLastTreatmentAt: timestamp del tratamiento tras tratar', async () => {
+    await detect(2);
+    await detect(2);
+    await detect(2);
+    const before = Date.now();
+    await service.treatManually('zone-a', 'user-1');
+    const lastTreatmentAt = service.getLastTreatmentAt('zone-a');
+    expect(lastTreatmentAt).not.toBeNull();
+    expect(lastTreatmentAt!.getTime()).toBeGreaterThanOrEqual(before);
+  });
 });

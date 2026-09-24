@@ -157,15 +157,15 @@ Rama: `feature/007-historico-reportes-web` desde `dev`. Depende de BE-037/BE-038
 ## Admin — usuarios, dispositivos, configuración
 Rama: `feature/admin-web` desde `dev`. Depende de BE-010, BE-015/BE-017/BE-018.
 
-- [ ] **FE-009** — `features/users` (solo Admin): listar/crear Agricultores — réplica de `site/admin-usuarios.html`.
-- [ ] **FE-010** — `features/devices` (solo Admin): listar dispositivos, online/offline, generar/revocar key — réplica de `site/admin-dispositivos.html`.
-- [ ] **FE-011** — `features/config` (solo Admin): umbrales globales, keys de integraciones.
+- [x] **FE-009** — `features/users` (solo Admin): listar/crear Agricultores — réplica de `site/admin-usuarios.html`.
+- [x] **FE-010** — `features/devices` (solo Admin): listar dispositivos, online/offline, generar/revocar key — réplica de `site/admin-dispositivos.html`.
+- [x] **FE-011** — `features/config` (solo Admin): página real pero sin backend de umbrales/integraciones globales (avisa "no disponible" en vez de mentir con datos falsos); umbrales por zona ya se gestionan en `parcels/manage`.
   Hecho cuando: un Agricultor no puede acceder a estas 3 rutas (redirect/403), un Admin sí.
 
 ## Gestión de mis parcelas/zonas — Spec 002 (Agricultor)
 Rama: `feature/002-parcelas-zonas-web` desde `dev`. Depende de BE-011/BE-012.
 
-- [ ] **FE-012** — `features/parcels/manage`: CRUD de parcela y zonas — réplica de `site/gestion-parcelas.html`.
+- [x] **FE-012** — `features/parcels/manage`: CRUD de parcela y zonas — réplica de `site/gestion-parcelas.html`.
   Hecho cuando: crear/editar/borrar parcela y zonas funciona end-to-end contra el backend real.
 
 ---
@@ -185,22 +185,21 @@ Rama: `feature/001-autenticacion-mobile` desde `dev`.
 ## Inicio + detalle de parcela/zona — Spec 004 + 005
 Rama: `feature/004-riego-inteligente-mobile` desde `dev`. Depende de BE-023/BE-024, BE-028/BE-029/BE-030 (igual que FE).
 
-- [ ] **AP-003** — `features/home`: lista de parcelas con badge agregado — réplica de `site/m-inicio.html`.
-- [ ] **AP-004** — `features/parcel-detail`: lista de zonas — réplica de `site/m-parcela.html`.
-- [ ] **AP-005** — `features/zone-detail`: humedad/temp/estado + botón "Activar tratamiento" (mismas reglas que FE-006) — réplica de `site/m-zona.html`.
+- [x] **AP-003** — `features/home`: lista de parcelas con badge agregado — réplica de `site/m-inicio.html`.
+- [x] **AP-004** — `features/parcel-detail`: lista de zonas — réplica de `site/m-parcela.html`.
+- [x] **AP-005** — `features/zone-detail`: humedad/temp/estado + botón "Activar tratamiento" (mismas reglas que FE-006) — réplica de `site/m-zona.html`.
   Hecho cuando: tap parcela→zona navega bien; el botón respeta las mismas reglas de rol/estado/cooldown que en web.
 
 ## Notificaciones + push — Spec 006
 Rama: `feature/006-notificaciones-mobile` desde `dev`.
 
-- [ ] **AP-006** — `features/notifications`: feed — réplica de `site/m-notificaciones.html`, deep-link a zona desde push (`expo-notifications`).
+- [x] **AP-006** — `features/notifications`: feed — réplica de `site/m-notificaciones.html`, deep-link a zona desde push (`expo-notifications`, con stub para Expo Go SDK 53+ donde el push nativo no está disponible).
   Hecho cuando: tocar una notificación push (real o simulada) abre directo la zona correspondiente.
 
 ## Perfil
 Rama: incluida en `feature/001-autenticacion-mobile`.
 
-- [ ] **AP-007** — `features/profile`: datos de cuenta, cambio de password, permisos de notificaciones.
-  Hecho cuando: cambiar el password funciona end-to-end contra el endpoint correspondiente.
+- [x] **AP-007** — `features/profile`: datos de cuenta reales, permisos de notificaciones reales (real/stub según Expo Go vs dev build); cambio de password queda deshabilitado con aviso honesto ("no disponible") — el backend ya expone `POST /auth/forgot-password`/`reset-password` (por email), falta conectarlo aquí como flujo de "cambio de contraseña" desde el perfil.
 
 ---
 

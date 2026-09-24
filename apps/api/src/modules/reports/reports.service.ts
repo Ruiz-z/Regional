@@ -13,6 +13,7 @@ export interface ZoneReport {
   minutesBaseline: number;
   ahorradoMinutos: number;
   ahorradoPorcentaje: number;
+  readings: unknown[];
   irrigationEvents: unknown[];
   pestDetections: unknown[];
   pestTreatments: unknown[];
@@ -32,6 +33,11 @@ export class ReportsService {
     const zones = await this.prisma.zone.findMany({
       where: { parcelId },
       include: {
+        readings: {
+          where: { createdAt: { gte: from, lte: to } },
+          orderBy: { createdAt: 'asc' },
+          select: { humidity: true, temperature: true, createdAt: true },
+        },
         irrigationEvents: {
           where: { createdAt: { gte: from, lte: to } },
           orderBy: { createdAt: 'asc' },
@@ -71,6 +77,7 @@ export class ReportsService {
         minutesBaseline,
         ahorradoMinutos,
         ahorradoPorcentaje,
+        readings: zone.readings,
         irrigationEvents: zone.irrigationEvents,
         pestDetections: zone.pestDetections,
         pestTreatments: zone.pestTreatments,

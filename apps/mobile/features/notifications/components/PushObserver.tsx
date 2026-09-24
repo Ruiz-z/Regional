@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { router, useRootNavigationState } from "expo-router";
-import * as Notifications from "expo-notifications";
+import Notifications from "@/shared/lib/notifications";
 import { useAuth } from "@/shared/contexts/AuthContext";
 import { notificationRoute } from "@/features/notifications/lib/notificationRoute";
 export function PushObserver() {
