@@ -18,3 +18,10 @@ apps/api/src/generated/
 # turbo
 turbo/logs/
 .turbo/
+
+# apps/vision (Python)
+apps/vision/.venv/
+apps/vision/__pycache__/
+apps/vision/**/__pycache__/
+apps/vision/.pytest_cache/
+apps/vision/*.pt

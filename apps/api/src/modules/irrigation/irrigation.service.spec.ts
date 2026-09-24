@@ -1,5 +1,6 @@
 import { IrrigationDecision } from '../../generated/prisma/client';
 import { IrrigationService } from './irrigation.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { WeatherService } from '../weather/weather.service';
 
 describe('IrrigationService', () => {
@@ -9,17 +10,21 @@ describe('IrrigationService', () => {
     irrigationEvent: { create: jest.Mock; findMany: jest.Mock };
   };
   let weather: { getForecast: jest.Mock };
+  let notifications: {
+    notifyRainCorrection: jest.Mock;
+    notifyIrrigationAnomaly: jest.Mock;
+  };
   let service: IrrigationService;
 
   const zoneA = {
     id: 'zone-a',
     humidityThreshold: 50,
-    parcel: { location: 'Guanajuato, MX' },
+    parcel: { location: 'Guanajuato, MX', ownerId: 'owner-a' },
   };
   const zoneB = {
     id: 'zone-b',
     humidityThreshold: 50,
-    parcel: { location: 'Guanajuato, MX' },
+    parcel: { location: 'Guanajuato, MX', ownerId: 'owner-b' },
   };
 
   beforeEach(() => {
@@ -32,9 +37,15 @@ describe('IrrigationService', () => {
       },
     };
     weather = { getForecast: jest.fn().mockResolvedValue(null) };
+    notifications = {
+      notifyRainCorrection: jest.fn(),
+      notifyIrrigationAnomaly: jest.fn(),
+    };
+    prisma.zone.findUnique.mockResolvedValue(zoneA);
     service = new IrrigationService(
       prisma as never,
       weather as unknown as WeatherService,
+      notifications as unknown as NotificationsService,
     );
   });
 
