@@ -6,7 +6,7 @@ import {
 import { AllExceptionsFilter } from './all-exceptions.filter';
 
 describe('AllExceptionsFilter', () => {
-  const json = jest.fn(() => undefined);
+  const json = jest.fn<unknown, unknown[]>(() => undefined);
   const status = jest.fn(() => ({ json }));
   const res = { status };
   const req = { method: 'GET', url: '/prueba' };
