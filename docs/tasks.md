@@ -138,8 +138,8 @@ Rama: `feature/004-riego-inteligente-web` desde `dev`. Depende de BE-023/BE-024.
 ## Detalle de parcela/zona — Spec 004 + 005
 Rama: misma `feature/004-riego-inteligente-web`. Depende de BE-023/BE-024, BE-028/BE-029/BE-030.
 
-- [ ] **FE-005** — `features/parcels/parcel-detail`: plano de zonas (grid) — réplica de `site/parcela.html`.
-- [ ] **FE-006** — Panel de zona + botón "Activar tratamiento" — visible/habilitado **solo si `role=AGRICULTOR` dueño** y estado Monitoreo/Intervención; llama `POST /zones/:id/treat`.
+- [x] **FE-005** — `features/parcels/parcel-detail`: plano de zonas (grid) — réplica de `site/parcela.html`.
+- [x] **FE-006** — Panel de zona + botón "Activar tratamiento" — visible/habilitado **solo si `role=AGRICULTOR` dueño** y estado Monitoreo/Intervención; llama `POST /zones/:id/treat`.
   Hecho cuando: Agricultor dueño con zona en Monitoreo ve el botón habilitado y funcional; Admin no lo ve en absoluto (no solo disabled).
 
 ## Notificaciones — Spec 006
