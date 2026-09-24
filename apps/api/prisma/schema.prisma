@@ -1,0 +1,203 @@
+// Schema maestro de SmartRiego MX.
+// Modelos agrupados por módulo de dominio, igual que src/modules/.
+// Convenciones: id uuid, timestamps Timestamptz(3), @@map snake_case plural, enums para estados.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- Enums ---
+
+// Roles fijos de la plataforma (constitution.md #3, docs/permissions.md).
+enum UserRole {
+  AGRICULTOR
+  ADMIN
+}
+
+// Tipo de dispositivo IoT registrado (Spec 003).
+enum DeviceType {
+  ESP32
+  VISION_SERVICE
+}
+
+// Decisión del motor de riego por zona (Spec 004 RF-4).
+enum IrrigationDecision {
+  REGAR
+  ESPERAR
+}
+
+// Tipos de notificación según el evento que las dispara (Spec 006 RF-1/RF-2/RF-3).
+enum NotificationType {
+  RAIN_CORRECTION // Spec 004 RF-8: riego de respaldo por lluvia insuficiente
+  IRRIGATION_ANOMALY // Spec 004 RF-9: N riegos sin subir humedad
+  PEST_ALERT // Spec 005 RF-3: foco de plaga confirmado
+}
+
+// Severidad de la notificación (Spec 006 RF-5): solo CRITICAL genera email.
+enum NotificationSeverity {
+  INFO
+  CRITICAL
+}
+
+// Origen del tratamiento de plaga (Spec 005 RF-7/RF-9).
+enum TreatmentTrigger {
+  AUTOMATIC
+  MANUAL
+}
+
+// --- Módulo Identity (Spec 001) ---
+
+// Usuario de la plataforma: Agricultor (dueño de parcelas) o Administrador.
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  role         UserRole
+  createdAt    DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime  @updatedAt @db.Timestamptz(3)
+
+  parcels       Parcel[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+// --- Módulo Parcels (Spec 002) ---
+
+// Parcela de un Agricultor: cultivo y ubicación; dividida en zonas independientes.
+model Parcel {
+  id        String   @id @default(uuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id])
+  name      String
+  location  String
+  crop      String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+
+  zones Zone[]
+
+  @@index([ownerId])
+  @@map("parcels")
+}
+
+// Zona independiente dentro de una parcela, con su propio umbral de humedad y estado.
+model Zone {
+  id                String   @id @default(uuid())
+  parcelId          String
+  parcel            Parcel   @relation(fields: [parcelId], references: [id], onDelete: Cascade)
+  name              String
+  humidityThreshold Float
+  createdAt         DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @db.Timestamptz(3)
+
+  devices          Device[]
+  readings         Reading[]
+  irrigationEvents IrrigationEvent[]
+  pestDetections   PestDetection[]
+  pestTreatments   PestTreatment[]
+  notifications    Notification[]
+
+  @@index([parcelId])
+  @@map("zones")
+}
+
+// --- Módulo Devices (Spec 003) ---
+
+// Dispositivo IoT (ESP32 o servicio de visión) asignado a una zona, autenticado por API key hash.
+model Device {
+  id         String     @id @default(uuid())
+  type       DeviceType
+  zoneId     String
+  zone       Zone       @relation(fields: [zoneId], references: [id])
+  apiKeyHash String     @unique
+  revokedAt  DateTime?  @db.Timestamptz(3)
+  lastSeenAt DateTime?  @db.Timestamptz(3)
+  createdAt  DateTime   @default(now()) @db.Timestamptz(3)
+
+  @@index([zoneId])
+  @@map("devices")
+}
+
+// --- Módulo Irrigation (Spec 004) ---
+
+// Lectura de sensor de una zona (humedad %, temperatura) reportada por el ESP32.
+model Reading {
+  id          String   @id @default(uuid())
+  zoneId      String
+  zone        Zone     @relation(fields: [zoneId], references: [id])
+  humidity    Float
+  temperature Float
+  createdAt   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([zoneId, createdAt])
+  @@map("readings")
+}
+
+// Decisión de riego ejecutada por el motor por zona, con la razón explicable (constitution.md #6).
+model IrrigationEvent {
+  id               String             @id @default(uuid())
+  zoneId           String
+  zone             Zone               @relation(fields: [zoneId], references: [id])
+  decision         IrrigationDecision
+  durationMinutes  Int?
+  reason           Json // {humidity, forecast, modelScore}
+  correctedForRain Boolean            @default(false) // Spec 004 RF-8
+  createdAt        DateTime           @default(now()) @db.Timestamptz(3)
+
+  @@index([zoneId, createdAt])
+  @@map("irrigation_events")
+}
+
+// --- Módulo Pest (Spec 005) ---
+
+// Detección de la plaga objetivo en un frame procesado por el servicio de visión.
+model PestDetection {
+  id        String   @id @default(uuid())
+  zoneId    String
+  zone      Zone     @relation(fields: [zoneId], references: [id])
+  count     Int
+  frameAt   DateTime @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([zoneId, createdAt])
+  @@map("pest_detections")
+}
+
+// Tratamiento de plaga ejecutado (automático o manual del Agricultor) sobre una zona.
+model PestTreatment {
+  id          String           @id @default(uuid())
+  zoneId      String
+  zone        Zone             @relation(fields: [zoneId], references: [id])
+  trigger     TreatmentTrigger
+  triggeredBy String? // userId del Agricultor si trigger=MANUAL, null si AUTOMATIC
+  executedAt  DateTime         @db.Timestamptz(3)
+  createdAt   DateTime         @default(now()) @db.Timestamptz(3)
+
+  @@index([zoneId, createdAt])
+  @@map("pest_treatments")
+}
+
+// --- Módulo Notifications (Spec 006) ---
+
+// Notificación a un usuario (dashboard/push/email), enlazada opcionalmente a una zona.
+model Notification {
+  id        String               @id @default(uuid())
+  userId    String
+  user      User                 @relation(fields: [userId], references: [id])
+  zoneId    String?
+  zone      Zone?                @relation(fields: [zoneId], references: [id])
+  type      NotificationType
+  severity  NotificationSeverity
+  read      Boolean              @default(false)
+  createdAt DateTime             @default(now()) @db.Timestamptz(3)
+
+  @@index([userId, read])
+  @@map("notifications")
+}

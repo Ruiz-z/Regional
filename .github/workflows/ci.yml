@@ -65,6 +65,8 @@ jobs:
   integration-tests:
     name: Integration tests (Postgres real)
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://smartriego:smartriego@localhost:5432/smartriego_test
     steps:
       - uses: actions/checkout@v4
 

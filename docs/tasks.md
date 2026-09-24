@@ -28,11 +28,11 @@ Rama: `feature/000-bootstrap-backend` desde `dev`.
 
 - [x] **BE-003** — Scaffold de `apps/api` (NestJS+TS), estructura `src/common/`, `src/config/`, `src/prisma/` vacíos.
   Hecho cuando: `pnpm --filter api start` levanta un Nest app vacío sin errores.
-- [ ] **BE-004** — `schema.prisma` completo con los 9 modelos/enums de `plan.md` + primera migración.
+- [x] **BE-004** — `schema.prisma` completo con los 9 modelos/enums de `plan.md` + primera migración.
   Hecho cuando: `prisma migrate dev` corre sin error y `prisma studio` muestra las 8 tablas.
-- [ ] **BE-005** — `docker-compose.test.yml` en `apps/api` + `PrismaModule`/`PrismaService` compartido.
+- [x] **BE-005** — `docker-compose.test.yml` en `apps/api` + `PrismaModule`/`PrismaService` compartido.
   Hecho cuando: `docker compose -f docker-compose.test.yml up -d` levanta Postgres y un test smoke conecta sin error.
-- [ ] **BE-006** — Filtro global de excepciones + interceptor de logging en `src/common/`.
+- [x] **BE-006** — Filtro global de excepciones + interceptor de logging en `src/common/`.
   Hecho cuando: una excepción no controlada devuelve JSON `{statusCode, message}`, no stack trace crudo.
 
 ## Identity — Spec 001
@@ -124,15 +124,15 @@ Todas las pantallas ya tienen su referencia exacta en `site/*.html` (markup, cop
 ## Auth + layout — Spec 001
 Rama: `feature/001-autenticacion-web` desde `dev`. Depende de BE-008/BE-009 (o mockear mientras tanto).
 
-- [ ] **FE-001** — `app/(auth)/login/page.tsx`: réplica de `site/index.html`, llama `POST /auth/login`, guarda el JWT.
-- [ ] **FE-002** — Layout `app/(dashboard)/layout.tsx`: guard de sesión + menú condicionado por `role`.
+- [x] **FE-001** — `app/(auth)/login/page.tsx`: réplica de `site/index.html`, llama `POST /auth/login`, guarda el JWT.
+- [x] **FE-002** — Layout `app/(dashboard)/layout.tsx`: guard de sesión + menú condicionado por `role`.
   Hecho cuando: sin sesión, `(dashboard)` redirige a `/login`; con sesión, el menú Admin solo aparece si `role=ADMIN`.
 
 ## Dashboard principal — Spec 004 + 005 (lectura)
 Rama: `feature/004-riego-inteligente-web` desde `dev`. Depende de BE-023/BE-024.
 
-- [ ] **FE-003** — `features/dashboard/`: selector de parcela — réplica de `site/dashboard.html`.
-- [ ] **FE-004** — Gráficas de humedad/consumo (skill `dataviz`), resumen de plagas, alertas activas.
+- [x] **FE-003** — `features/dashboard/`: selector de parcela — réplica de `site/dashboard.html`.
+- [x] **FE-004** — Gráficas de humedad/consumo (skill `dataviz`), resumen de plagas, alertas activas.
   Hecho cuando: cambiar el selector actualiza gráficas y alertas sin recargar.
 
 ## Detalle de parcela/zona — Spec 004 + 005
@@ -177,9 +177,10 @@ Referencia visual: `site/m-*.html`. Mismo patrón `app/`→`features/`→`shared
 ## Login + navegación — Spec 001
 Rama: `feature/001-autenticacion-mobile` desde `dev`.
 
-- [ ] **AP-001** — Pantalla login (`app/login.tsx`) — réplica de `site/index.html` adaptada a mobile.
-- [ ] **AP-002** — `app/(private)/_layout.tsx`: guard de sesión + tabs (Inicio/Notificaciones/Perfil).
+- [x] **AP-001** — Pantalla login (`app/login.tsx`) — réplica de `site/index.html` adaptada a mobile.
+- [x] **AP-002** — `app/(private)/_layout.tsx`: guard de sesión + tabs (Inicio/Notificaciones/Perfil).
   Hecho cuando: sin sesión no se entra a `(private)`; con sesión, los tabs navegan bien.
+  Nota: el tercer tab queda como "Alertas" (etiqueta real del mockup `m-notificaciones.html`).
 
 ## Inicio + detalle de parcela/zona — Spec 004 + 005
 Rama: `feature/004-riego-inteligente-mobile` desde `dev`. Depende de BE-023/BE-024, BE-028/BE-029/BE-030 (igual que FE).
