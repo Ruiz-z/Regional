@@ -37,5 +37,33 @@ Agricultor/Administrador (consultan estado), ESP32 (reporta lecturas y ejecuta c
 ## Criterios de finalización
 - RF-1 a RF-9 con test en verde (motor de decisión con distintos escenarios humedad/pronóstico, incluyendo el caso de corrección por lluvia insuficiente y el de anomalía) + demo física: una zona con humedad baja riega, otra con humedad normal no.
 
+## Diagrama — ciclo completo de decisión (todos los casos)
+
+```mermaid
+flowchart TD
+    R0(["ESP32 envía POST /readings\n{humidity, temperature} — cada 1 min (RF-7)"]) --> R1{"¿Lectura dentro\nde rango físico\n(0-100% humedad)?"}
+    R1 -- No --> R2["Se descarta y se loguea\nno se usa para decidir"]
+    R1 -- Sí --> R3["Persiste la lectura (RF-1)"]
+    R3 --> R4{"¿OpenWeather\nresponde?"}
+    R4 -- No --> R5["Decide solo con humedad+modelo\nsin pronóstico, lo indica en la razón"]
+    R4 -- Sí --> R6["Incluye pronóstico de lluvia\nen la decisión"]
+    R5 --> R7["Motor de decisión:\nhumedad vs. umbral + pronóstico + score del modelo (RF-3)"]
+    R6 --> R7
+    R7 --> R8{"¿Resultado?"}
+    R8 -- ESPERAR --> R9{"¿La razón fue\n'esperar por lluvia'?"}
+    R9 -- No --> R10["Responde ESPERAR\ncon la razón (RF-4)"]
+    R9 -- Sí --> R11["Marca la zona para\nverificar en el siguiente ciclo (RF-8)"]
+    R8 -- REGAR --> R12["Responde REGAR {duración}\ncon la razón (RF-4)"]
+    R12 --> R13["ESP32 ejecuta y reporta\nPOST /irrigation-events (RF-5)"]
+    R13 --> R14{"¿Es el 3er ciclo REGAR\nconsecutivo en esta zona\nsin subir humedad?"}
+    R14 -- Sí --> R15["Marca 'anomalía de riego' (RF-9)\n→ notifica como CRÍTICA (Spec 006)"]
+    R14 -- No --> R16["Continúa el ciclo normal"]
+
+    V0(["Siguiente lectura tras un ESPERAR\npor lluvia (zona marcada en R11)"]) --> V1{"¿La humedad subió\nlo suficiente?"}
+    V1 -- Sí --> V2["Pronóstico se cumplió,\nsigue en ESPERAR normal"]
+    V1 -- No --> V3["Cambia decisión a REGAR\n(riego de respaldo, RF-8)"]
+    V3 --> V4["Notifica 'corrección por lluvia\ninsuficiente' como INFORMATIVA (Spec 006)"]
+```
+
 ## Dudas abiertas
 - Ninguna bloqueante.

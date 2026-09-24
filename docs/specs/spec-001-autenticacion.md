@@ -33,5 +33,30 @@ Agricultor, Administrador.
 ## Criterios de finalización
 - RF-1 a RF-7 con test en verde (unitario + integración con Postgres real) + demo manual: login de un Agricultor y de un Administrador, cada uno viendo solo lo que le corresponde.
 
+## Diagrama — todos los casos de login y autorización
+
+```mermaid
+flowchart TD
+    L0(["POST /auth/login\n{email, password}"]) --> L1{"¿Existe el email?"}
+    L1 -- No --> L2["401 genérico\n(mismo mensaje que password incorrecto, RF-2)"]
+    L1 -- Sí --> L3{"¿Password coincide\ncon el hash bcrypt?"}
+    L3 -- No --> L2
+    L3 -- Sí --> L4["Genera JWT {userId, role}\nexpira en 24h, sin refresh"]
+    L4 --> L5["200 OK + JWT"]
+
+    R0(["Request a endpoint protegido\ncon Authorization: Bearer <token>"]) --> R1{"¿Viene el header\nAuthorization?"}
+    R1 -- No --> R2["401"]
+    R1 -- Sí --> R3{"¿JWT válido\ny no expirado?"}
+    R3 -- No --> R2
+    R3 -- Sí --> R4{"¿El endpoint exige\nrol Administrador?"}
+    R4 -- "Sí, y role=AGRICULTOR" --> R5["403"]
+    R4 -- "No, o role=ADMIN" --> R6["Continúa al handler\ncon userId/role identificados"]
+
+    C0(["POST /users (alta de Agricultor)"]) --> C1{"¿Quien llama\nes Administrador?"}
+    C1 -- No --> C2["403 — solo Admin da de alta (RF-6)"]
+    C1 -- Sí --> C3["Crea User{role: AGRICULTOR}\npassword hasheado con bcrypt (RF-7)"]
+    C3 --> C4["200 OK\n(dispara email de bienvenida, Spec 006)"]
+```
+
 ## Dudas abiertas
 - Ninguna bloqueante.

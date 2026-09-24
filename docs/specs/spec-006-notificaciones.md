@@ -42,5 +42,32 @@ Agricultor (recibe push+dashboard+email de sus parcelas), Administrador (ve todo
 ## Criterios de finalización
 - RF-1 a RF-10 con test en verde (creación de notificación ante cada evento simulado: corrección por lluvia, anomalía, foco de plaga) + demo manual: provocar una anomalía de riego y un foco de plaga y ver ambas alertas llegar por los tres canales, y confirmar que una corrección por lluvia insuficiente solo aparece en dashboard/push, no por email.
 
+## Diagrama — todos los tipos de notificación y sus canales
+
+```mermaid
+flowchart TD
+    E1(["Corrección por lluvia insuficiente\n(Spec 004 RF-8)"]) --> S1["Severidad: INFORMATIVA"]
+    E2(["Anomalía de riego\n3 ciclos sin subir humedad (Spec 004 RF-9)"]) --> S2["Severidad: CRÍTICA"]
+    E3(["Foco de plaga confirmado\n(Spec 005 RF-3)"]) --> S2
+
+    S1 --> P1["Crea Notification\nasociada al Agricultor dueño de la zona"]
+    S2 --> P1
+    P1 --> Ch1["Push al móvil (RF-4)"]
+    P1 --> Ch2["Badge/alerta en dashboard web (RF-4)"]
+    P1 --> Sev{"¿Severidad?"}
+    Sev -- INFORMATIVA --> NoEmail["NO envía email (RF-5)\nsolo push + dashboard"]
+    Sev -- CRÍTICA --> Email["Envía también email vía Resend\ncomo respaldo del push (RF-5)"]
+
+    Repeat{"¿La misma zona ya tiene\nuna anomalía sin resolver?"} -- Sí --> Skip["No re-notifica en cada ciclo\n(evita spam, ver Casos límite)"]
+    Repeat -- "No / zona volvió a Normal antes" --> P1
+
+    Acc0(["Administrador crea Agricultor\n(Spec 001 RF-6)"]) --> Trans["Email transaccional de bienvenida (RF-6)"]
+    Acc1(["Usuario pide reset de password"]) --> Trans2["Email con enlace/código (RF-7)"]
+    Acc2(["Cron semanal"]) --> Trans3["Email de resumen de consumo\ny eventos por Agricultor (RF-8)"]
+
+    NoPush{"¿Agricultor sin\ntoken push registrado?"} -- Sí --> Fallback["Solo dashboard + email\nsi es crítica (Caso límite)"]
+    ResendFail{"¿Falla el envío\npor Resend?"} -- Sí --> Retry["Reintenta o loguea el error\nno bloquea push/dashboard ya enviados"]
+```
+
 ## Dudas abiertas
 - Ninguna bloqueante.

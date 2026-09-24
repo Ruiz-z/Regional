@@ -31,5 +31,28 @@ Agricultor (CRUD de las suyas), Administrador (lectura/edición de cualquiera).
 ## Criterios de finalización
 - RF-1 a RF-5 con test en verde + demo manual: un Agricultor crea una parcela con 2 zonas, un segundo Agricultor no puede verla, el Administrador sí.
 
+## Diagrama — todos los casos de acceso y CRUD
+
+```mermaid
+flowchart TD
+    S0(["Request sobre /parcels/:id o /parcels/:id/zones/:zid"]) --> S1{"¿Rol del usuario?"}
+    S1 -- ADMIN --> S2["Acceso permitido\nsin importar ownerId (RF-4)"]
+    S1 -- AGRICULTOR --> S3{"¿ownerId de la parcela\n== userId del request?"}
+    S3 -- No --> S4["403 (RF-3)"]
+    S3 -- Sí --> S2
+
+    C0(["POST /parcels\n{name, location, crop}"]) --> C1["Crea Parcel{ownerId: userId del Agricultor}"]
+    C1 --> C2["201, parcela sin zonas todavía\n(estado 'sin zonas configuradas')"]
+
+    Z0(["POST /parcels/:id/zones\n{name, humidityThreshold}"]) --> Z1{"¿Agricultor es owner\nde :id? (o es Admin)"}
+    Z1 -- No --> Z2["403"]
+    Z1 -- Sí --> Z3["Crea Zone asociada a la parcela"]
+
+    D0(["DELETE /parcels/:id"]) --> D1{"¿Owner o Admin?"}
+    D1 -- No --> D2["403"]
+    D1 -- Sí --> D3["Borra parcela\n+ borra en cascada sus zonas (RF-5)"]
+    D3 --> D4["Desvincula (no borra)\nlos dispositivos IoT de esas zonas"]
+```
+
 ## Dudas abiertas
 - Ninguna bloqueante.

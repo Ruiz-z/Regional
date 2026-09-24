@@ -1,13 +1,13 @@
 # AGENTS.md — SmartRiego MX
 
 ## Proyecto
-SmartRiego MX es una plataforma IoT de agricultura de precisión: se instala sobre infraestructura de riego existente, decide cuándo/cuánto regar **por zona** dentro de cada parcela, y detecta un foco de **una plaga objetivo** mediante visión artificial (YOLO) sobre una cámara cenital que simula un dron — actuando directamente (válvulas/bombas, tratamiento simulado con agua) en vez de solo recomendar. Monorepo: backend NestJS+Prisma+Postgres, web Next.js+shadcn, móvil Expo+Expo Router, firmware ESP32 (C++/Arduino), y pipeline de visión en Python sobre Raspberry Pi 5.
+SmartRiego MX es una plataforma IoT de agricultura de precisión: se instala sobre infraestructura de riego existente, decide cuándo/cuánto regar **por zona** dentro de cada parcela, y detecta un foco de **una plaga objetivo** mediante visión artificial (YOLO) sobre una cámara cenital que simula un dron — actuando directamente (válvulas/bombas, tratamiento simulado con agua) en vez de solo recomendar. Monorepo: backend NestJS+Prisma+Postgres, web Next.js+shadcn, móvil Expo+Expo Router, firmware ESP32 (C++/Arduino), y un microservicio Python (FastAPI) para el pipeline de visión, desplegado junto al resto del backend.
 
 ## Comandos
 - Ejecutar: `pnpm dev` (turbo — levanta `apps/api` y `apps/web` en paralelo)
 - Tests: `pnpm test` (unitarios) / `pnpm test:integration` (Postgres real vía `docker-compose.test.yml`)
 - Lint/formato: `pnpm lint`
-- Pipeline de visión (Raspberry Pi): `python -m pytest` dentro de `apps/vision` (una vez creado)
+- Servicio de visión: `python -m pytest` dentro de `apps/vision` (una vez creado)
 
 ## Estilo y convenciones
 - TypeScript estricto en backend, web y móvil; Python 3.11+ en el pipeline de visión.
