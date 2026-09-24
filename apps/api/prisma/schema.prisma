@@ -111,15 +111,16 @@ model Zone {
 // --- Módulo Devices (Spec 003) ---
 
 // Dispositivo IoT (ESP32 o servicio de visión) asignado a una zona, autenticado por API key hash.
+// zoneId es opcional: al borrar una parcela, los dispositivos quedan "desvinculados" (spec-002 RF-5), no borrados.
 model Device {
-  id         String     @id @default(uuid())
+  id         String    @id @default(uuid())
   type       DeviceType
-  zoneId     String
-  zone       Zone       @relation(fields: [zoneId], references: [id])
-  apiKeyHash String     @unique
-  revokedAt  DateTime?  @db.Timestamptz(3)
-  lastSeenAt DateTime?  @db.Timestamptz(3)
-  createdAt  DateTime   @default(now()) @db.Timestamptz(3)
+  zoneId     String?
+  zone       Zone?     @relation(fields: [zoneId], references: [id])
+  apiKeyHash String    @unique
+  revokedAt  DateTime? @db.Timestamptz(3)
+  lastSeenAt DateTime? @db.Timestamptz(3)
+  createdAt  DateTime  @default(now()) @db.Timestamptz(3)
 
   @@index([zoneId])
   @@map("devices")
