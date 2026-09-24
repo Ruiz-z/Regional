@@ -103,8 +103,8 @@ Rama: `feature/006-notificaciones` desde `dev`.
 ## Reports — Spec 007
 Rama: `feature/007-historico-reportes` desde `dev`.
 
-- [ ] **BE-037** — `GET /parcels/:id/history?from&to`: rango, ownership, eventos del rango. RF-2, RF-5.
-- [ ] **BE-038** — Consumo (minutos regados) + ahorro estimado vs. línea base fija. RF-3, RF-4.
+- [x] **BE-037** — `GET /parcels/:id/history?from&to`: rango, ownership, eventos del rango. RF-2, RF-5.
+- [x] **BE-038** — Consumo (minutos regados) + ahorro estimado vs. línea base fija. RF-3, RF-4.
   Hecho cuando: rango inválido→400, parcela ajena→403, sin eventos→200 vacío; cálculo con datos conocidos coincide con lo esperado a mano.
 
 ## Servicio de visión (`apps/vision`)
