@@ -151,7 +151,7 @@ Rama: `feature/006-notificaciones-web` desde `dev`. Depende de BE-031/BE-032/BE-
 ## Histórico y reportes — Spec 007
 Rama: `feature/007-historico-reportes-web` desde `dev`. Depende de BE-037/BE-038.
 
-- [ ] **FE-008** — `features/reports`: gráficas de consumo/ahorro, timeline, filtro por parcela/zona/fecha — réplica de `site/historico.html`.
+- [x] **FE-008** — `features/reports`: gráficas de consumo/ahorro, timeline, filtro por parcela/zona/fecha — réplica de `site/historico.html`.
   Hecho cuando: cambiar el rango dispara nueva consulta a `GET /parcels/:id/history` y actualiza gráficas.
 
 ## Admin — usuarios, dispositivos, configuración
