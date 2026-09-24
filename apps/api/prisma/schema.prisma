@@ -59,6 +59,9 @@ model User {
   email        String    @unique
   passwordHash String
   role         UserRole
+  // Token de Expo Push (spec-006 RF-4). Null si el Agricultor no instaló la
+  // app o no otorgó permiso de notificaciones (caso límite: solo dashboard+email).
+  expoPushToken String?
   createdAt    DateTime  @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime  @updatedAt @db.Timestamptz(3)
 
