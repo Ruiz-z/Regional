@@ -201,6 +201,11 @@ Rama: incluida en `feature/001-autenticacion-mobile`.
 
 - [x] **AP-007** — `features/profile`: datos de cuenta reales, permisos de notificaciones reales (real/stub según Expo Go vs dev build); cambio de password queda deshabilitado con aviso honesto ("no disponible") — el backend ya expone `POST /auth/forgot-password`/`reset-password` (por email), falta conectarlo aquí como flujo de "cambio de contraseña" desde el perfil.
 
+## Perfil (web)
+Nunca tuvo un ID de tarea asignado en el spec original — la página `/profile` de `apps/web` quedó como `PagePlaceholder` ("fuera del alcance") mientras se maquetaban FE-001..FE-012. Se detectó y cerró en la auditoría de datos mockeados.
+
+- [x] **FE-013** — `features/profile`: cuenta real vía `GET /users/me` (email, rol, fecha de alta) y cambio de contraseña real de punta a punta usando `POST /auth/forgot-password` + `POST /auth/reset-password` (mismos endpoints que ya usaba `AP-007`, aquí sí conectados). Requirió arreglar `GET /users/me`, que hasta ahora solo devolvía el payload del JWT (sin email) en vez del usuario real.
+
 ---
 
 ## Verificación general
