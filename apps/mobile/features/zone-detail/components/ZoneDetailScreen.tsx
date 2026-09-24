@@ -37,12 +37,12 @@ export function ZoneDetailScreen() {
     }
   }, [parcelId]);
   useEffect(() => {
-    void load();
+    const initial = setTimeout(() => void load(), 0);
     const timer = setInterval(() => {
       setNow(new Date());
       void load();
     }, 60000);
-    return () => clearInterval(timer);
+    return () => { clearTimeout(initial); clearInterval(timer); };
   }, [load]);
   useEffect(() => {
     const timer = setInterval(() => setNow(new Date()), 1000);

@@ -34,7 +34,8 @@ export function ParcelDetailScreen(): React.JSX.Element {
   }, [id]);
 
   useEffect(() => {
-    void load();
+    const timer = setTimeout(() => void load(), 0);
+    return () => clearTimeout(timer);
   }, [load]);
 
   if (loading) {

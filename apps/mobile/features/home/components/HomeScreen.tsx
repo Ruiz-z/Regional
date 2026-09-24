@@ -32,7 +32,8 @@ export function HomeScreen(): React.JSX.Element {
   }, []);
 
   useEffect(() => {
-    void load();
+    const timer = setTimeout(() => void load(), 0);
+    return () => clearTimeout(timer);
   }, [load]);
 
   const firstName = user?.name?.split(" ")[0] ?? "Agricultor";

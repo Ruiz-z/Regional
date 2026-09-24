@@ -3,7 +3,7 @@ export type ParcelResponse = Pick<
   Parcel,
   "id" | "ownerId" | "name" | "location" | "crop"
 > & {
-  zones?: Array<Pick<Zone, "id" | "parcelId" | "name" | "humidityThreshold">>;
+  zones?: Pick<Zone, "id" | "parcelId" | "name" | "humidityThreshold">[];
 };
 export function mapParcel(p: ParcelResponse): Parcel {
   return {
