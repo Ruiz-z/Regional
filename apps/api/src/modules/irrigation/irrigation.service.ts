@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import type { Prisma } from '../../generated/prisma/client';
 import { IrrigationDecision } from '../../generated/prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { WeatherService } from '../weather/weather.service';
 import { CreateIrrigationEventDto } from './dto/create-irrigation-event.dto';
 import { CreateReadingDto } from './dto/create-reading.dto';
@@ -34,6 +35,7 @@ export class IrrigationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly weather: WeatherService,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async recordReading(zoneId: string, dto: CreateReadingDto) {
@@ -66,6 +68,10 @@ export class IrrigationService {
       const increase = dto.humidity - pending.humidityAtDecision;
       if (increase < EXPECTED_RAIN_HUMIDITY_INCREASE) {
         this.pendingRainCorrection.add(zoneId);
+        await this.notifications.notifyRainCorrection(
+          zoneId,
+          zone.parcel.ownerId,
+        );
         return {
           decision: IrrigationDecision.REGAR,
           durationMinutes: calcDurationMinutes(
@@ -112,6 +118,14 @@ export class IrrigationService {
   }
 
   async recordIrrigationEvent(zoneId: string, dto: CreateIrrigationEventDto) {
+    const zone = await this.prisma.zone.findUnique({
+      where: { id: zoneId },
+      include: { parcel: true },
+    });
+    if (!zone) {
+      throw new BadRequestException('Zona no encontrada para este dispositivo');
+    }
+
     const readings = await this.prisma.reading.findMany({
       where: { zoneId },
       orderBy: { createdAt: 'desc' },
@@ -138,6 +152,11 @@ export class IrrigationService {
     if (anomalyDetected) {
       this.logger.warn(`Anomalía de riego detectada en zona ${zoneId}`);
     }
+    await this.notifications.notifyIrrigationAnomaly(
+      zoneId,
+      zone.parcel.ownerId,
+      anomalyDetected,
+    );
 
     return { ...event, anomalyDetected };
   }

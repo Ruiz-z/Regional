@@ -92,12 +92,12 @@ Rama: `feature/005-deteccion-plagas` desde `dev`.
 ## Notifications — Spec 006
 Rama: `feature/006-notificaciones` desde `dev`.
 
-- [ ] **BE-031** — Crear `Notification` desde evento (anomalía/plaga/lluvia) con severidad correcta. RF-1, RF-2, RF-3.
-- [ ] **BE-032** — Push (Expo server SDK) + `GET /notifications`. RF-4.
-- [ ] **BE-033** — Email vía Resend solo si severidad `CRITICAL`. RF-5.
-- [ ] **BE-034** — Emails transaccionales: bienvenida + reset password. RF-6, RF-7.
-- [ ] **BE-035** — Cron semanal de resumen por Agricultor. RF-8.
-- [ ] **BE-036** — Leído/no leído + listado agregado Admin. RF-9, RF-10.
+- [x] **BE-031** — Crear `Notification` desde evento (anomalía/plaga/lluvia) con severidad correcta. RF-1, RF-2, RF-3.
+- [x] **BE-032** — Push (Expo, vía fetch a la API REST) + `GET /notifications`. RF-4.
+- [x] **BE-033** — Email vía Resend (vía fetch) solo si severidad `CRITICAL`. RF-5.
+- [x] **BE-034** — Emails transaccionales: bienvenida + reset password. RF-6, RF-7.
+- [x] **BE-035** — Resumen semanal por Agricultor: job manual (`POST /notifications/weekly-summary`, Admin), sin cron real. RF-8.
+- [x] **BE-036** — Leído/no leído + listado agregado Admin. RF-9, RF-10.
   Hecho cuando: cada tipo de evento genera severidad correcta; INFO no llama Resend, CRITICAL sí; alta de Agricultor dispara bienvenida; job manual genera resumen por Agricultor; Admin ve notificaciones de 2 Agricultores en un listado.
 
 ## Reports — Spec 007
@@ -110,9 +110,9 @@ Rama: `feature/007-historico-reportes` desde `dev`.
 ## Servicio de visión (`apps/vision`)
 Rama: `feature/005-deteccion-plagas-vision` desde `dev` (o incluida en `feature/005-deteccion-plagas` si BE lleva ambas).
 
-- [ ] **BE-039** — Scaffold FastAPI, `requirements.txt`, `/health`, cliente HTTP con la API key del dispositivo hacia `apps/api`.
-- [ ] **BE-040** — Pipeline YOLO mínimo: inferencia sobre un frame de prueba, mapeo a zona por cuadrante fijo.
-- [ ] **BE-041** — Loop: cámara → inferencia → `POST /pest-detections`.
+- [x] **BE-039** — Scaffold FastAPI, `requirements.txt`, `/health`, cliente HTTP con la API key del dispositivo hacia `apps/api`.
+- [x] **BE-040** — Pipeline YOLO mínimo: inferencia sobre un frame de prueba, mapeo a zona por cuadrante fijo.
+- [x] **BE-041** — Loop: cámara → inferencia → `POST /pest-detections`.
   Hecho cuando: `/health` responde 200; imagen de prueba → zona/conteo correctos; corriendo contra backend real, cada frame genera un request registrado.
 
 ---
@@ -151,7 +151,7 @@ Rama: `feature/006-notificaciones-web` desde `dev`. Depende de BE-031/BE-032/BE-
 ## Histórico y reportes — Spec 007
 Rama: `feature/007-historico-reportes-web` desde `dev`. Depende de BE-037/BE-038.
 
-- [ ] **FE-008** — `features/reports`: gráficas de consumo/ahorro, timeline, filtro por parcela/zona/fecha — réplica de `site/historico.html`.
+- [x] **FE-008** — `features/reports`: gráficas de consumo/ahorro, timeline, filtro por parcela/zona/fecha — réplica de `site/historico.html`.
   Hecho cuando: cambiar el rango dispara nueva consulta a `GET /parcels/:id/history` y actualiza gráficas.
 
 ## Admin — usuarios, dispositivos, configuración

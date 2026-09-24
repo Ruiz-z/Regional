@@ -54,10 +54,14 @@ export async function loginUser(
   }
 
   try {
-    return await apiFetch<LoginResponse>("/auth/login", {
+    const response = await apiFetch<{ accessToken: string }>("/auth/login", {
       method: "POST",
       body: JSON.stringify(payload),
     });
+    if (!response || typeof response.accessToken !== "string" || !response.accessToken) {
+      throw new Error("No se recibió una sesión válida. Intenta nuevamente.");
+    }
+    return { token: response.accessToken };
   } catch (error) {
     if (error instanceof ApiError && error.status === 401) {
       throw new ApiError(401, DEFAULT_LOGIN_ERROR);

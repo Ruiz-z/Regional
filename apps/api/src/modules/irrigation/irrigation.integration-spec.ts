@@ -97,6 +97,7 @@ describe('Irrigation (integración)', () => {
   });
 
   afterAll(async () => {
+    await prisma.notification.deleteMany({ where: { zoneId } });
     await prisma.irrigationEvent.deleteMany({ where: { zoneId } });
     await prisma.reading.deleteMany({ where: { zoneId } });
     await prisma.device.deleteMany({ where: { zoneId } });

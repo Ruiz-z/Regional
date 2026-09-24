@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PestTreatment, TreatmentTrigger } from '../../generated/prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
+import { NotificationsService } from '../notifications/notifications.service';
 import { CreatePestDetectionDto } from './dto/create-pest-detection.dto';
 
 export type PestLevel = 'NORMAL' | 'MONITOREO' | 'INTERVENCION';
@@ -38,7 +39,10 @@ export class PestService {
   // de frames consecutivos, nivel confirmado y cooldown del tratamiento.
   private readonly zoneStates = new Map<string, ZonePestState>();
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+  ) {}
 
   getLevel(zoneId: string): PestLevel {
     return this.getState(zoneId).level;
@@ -47,6 +51,7 @@ export class PestService {
   async recordDetection(dto: CreatePestDetectionDto): Promise<DetectionResult> {
     const zone = await this.prisma.zone.findUnique({
       where: { id: dto.zoneId },
+      include: { parcel: true },
     });
     if (!zone) {
       throw new BadRequestException('Zona no encontrada');
@@ -64,6 +69,7 @@ export class PestService {
 
     if (dto.count <= 0) {
       state.consecutiveFrames = 0;
+      this.notifications.resetPestAlert(dto.zoneId);
       return this.toResult(dto.zoneId, state, false);
     }
 
@@ -72,8 +78,16 @@ export class PestService {
       return this.toResult(dto.zoneId, state, false);
     }
 
+    const justConfirmed =
+      state.consecutiveFrames === CONSECUTIVE_FRAMES_TO_CONFIRM;
     state.level =
       dto.count >= INTERVENTION_COUNT_THRESHOLD ? 'INTERVENCION' : 'MONITOREO';
+
+    await this.notifications.notifyPestAlert(
+      dto.zoneId,
+      zone.parcel.ownerId,
+      justConfirmed,
+    );
 
     let treatmentTriggered = false;
     if (state.level === 'INTERVENCION' && !this.isInCooldown(state)) {

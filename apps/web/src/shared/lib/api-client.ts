@@ -1,5 +1,5 @@
 const API_URL: string =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+  process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 export class ApiError extends Error {
   readonly status: number;
