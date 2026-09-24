@@ -18,6 +18,17 @@ SmartRiego MX es una plataforma IoT de agricultura de precisión: se instala sob
 - Identificadores de código en inglés; documentación, specs y mensajes de commit en español.
 - Arquitectura por dominio: `modules/`/`features/` agrupados por negocio (parcelas, zonas, riego, plagas), `common/`/`shared/` solo para lo realmente transversal — ver la nota "Arquitectura de referencia" del vault.
 
+## Worktrees (IMPORTANTE)
+Cada subagente trabaja en su **propio git worktree** (carpeta física separada, misma historia). No se comparte checkout ni se corre git en la carpeta base compartida:
+- Agente BE (backend NestJS/Prisma): `/home/mau/personal/Hackregional/Regional-be` → rama `feature/001-autenticacion`
+- Agente FE (web Next.js): `/home/mau/personal/Hackregional/Regional-fe` → ramas `feature/00X-...-web`
+- Agente AP (móvil Expo): `/home/mau/personal/Hackregional/Regional-ap` → ramas `feature/00X-...-mobile`
+
+Reglas:
+- Cada agente **commitea y hace push de su rama cuando termina su task**; los cambios son independientes.
+- No tocar el worktree de otro agente ni la carpeta base (`Regional`), que es solo la principal.
+- Para ver branches del repo desde cualquier worktree: `git branch -a` (comparte `.git`).
+
 ## Reglas
 - Lee `docs/constitution.md` y la spec activa en `docs/specs/` antes de tocar código.
 - No agregar frameworks nuevos, especies de plaga adicionales, ni un dron físico real sin actualizar la constitución primero (constitution.md #1, #7, #17).
