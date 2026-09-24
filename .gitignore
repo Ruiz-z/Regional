@@ -8,6 +8,8 @@ site/shots/
 dist/
 *.tsbuildinfo
 coverage/
+.next/
 
 # prisma
 apps/api/prisma/*.db
+apps/api/src/generated/
