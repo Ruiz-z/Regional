@@ -24,6 +24,8 @@ async function bootstrap(): Promise<void> {
     AppModule,
     new ExpressAdapter(expressApp),
   );
+  // Ver nota en src/main.ts sobre por qué reflejar el origin es seguro acá.
+  app.enableCors({ origin: true });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LoggingInterceptor());

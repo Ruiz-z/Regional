@@ -38,12 +38,13 @@ export class UsersService {
     return user;
   }
 
-  async create(dto: CreateUserDto): Promise<User> {
+  async create(dto: CreateUserDto): Promise<SafeUser> {
     const role = dto.role ?? UserRole.AGRICULTOR;
     const passwordHash = await this.hashPassword(dto.password);
     try {
       const user = await this.prisma.user.create({
         data: { email: dto.email, passwordHash, role },
+        select: SAFE_USER_SELECT,
       });
       await this.notifications.sendWelcomeEmail(user.email);
       return user;

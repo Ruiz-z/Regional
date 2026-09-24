@@ -55,6 +55,8 @@ describe('Users (integración)', () => {
       .set('Authorization', `Bearer ${accessTokenOf(loginRes)}`)
       .send({ email: newEmail, password: 'otraclave8' });
     expect(res.status).toBe(201);
+    const body = res.body as { passwordHash?: string };
+    expect(body.passwordHash).toBeUndefined();
     const created = await prisma.user.findUnique({
       where: { email: newEmail },
     });
