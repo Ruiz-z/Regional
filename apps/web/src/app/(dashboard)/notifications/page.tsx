@@ -1,17 +1,11 @@
 import type { Metadata } from "next";
 
-import { PagePlaceholder } from "@/shared/components/layout/page-placeholder";
+import { NotificationsView } from "@/features/notifications/notifications-view";
 
 export const metadata: Metadata = {
   title: "Notificaciones",
 };
 
 export default function NotificationsPage() {
-  return (
-    <PagePlaceholder
-      title="Notificaciones"
-      subtitle="Alertas informativas y críticas de tus parcelas."
-      task="FE-007"
-    />
-  );
+  return <NotificationsView />;
 }

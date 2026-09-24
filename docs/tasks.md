@@ -145,7 +145,7 @@ Rama: misma `feature/004-riego-inteligente-web`. Depende de BE-023/BE-024, BE-02
 ## Notificaciones — Spec 006
 Rama: `feature/006-notificaciones-web` desde `dev`. Depende de BE-031/BE-032/BE-036.
 
-- [ ] **FE-007** — `features/notifications`: listado con severidad informativa/crítica distinta — réplica de `site/notificaciones.html`; marcar leído al abrir.
+- [x] **FE-007** — `features/notifications`: listado con severidad informativa/crítica distinta — réplica de `site/notificaciones.html`; marcar leído al abrir.
   Hecho cuando: crítica se ve visualmente distinta de informativa; el estado leído persiste tras recargar.
 
 ## Histórico y reportes — Spec 007
