@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { loadConfig } from './config/configuration';
 import { IdentityModule } from './modules/identity/identity.module';
 import { ParcelsModule } from './modules/parcels/parcels.module';
+import { DevicesModule } from './modules/devices/devices.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -13,6 +14,7 @@ import { PrismaModule } from './prisma/prisma.module';
     PrismaModule,
     IdentityModule,
     ParcelsModule,
+    DevicesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

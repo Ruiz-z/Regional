@@ -56,10 +56,10 @@ Rama: `feature/002-parcelas-zonas` desde `feature/001-autenticacion` (depende de
 ## Devices — Spec 003
 Rama: `feature/003-dispositivos-iot` desde `dev`.
 
-- [ ] **BE-015** — `POST /devices` (Admin): genera key, guarda hash, la devuelve una vez. RF-1.
-- [ ] **BE-016** — `DeviceKeyGuard` (`X-Device-Key`) para endpoints de ingestión. RF-2, RF-3.
-- [ ] **BE-017** — Revocar/regenerar key. RF-4.
-- [ ] **BE-018** — Online/offline por `lastSeenAt` (>5 min). RF-5.
+- [x] **BE-015** — `POST /devices` (Admin): genera key, guarda hash, la devuelve una vez. RF-1.
+- [x] **BE-016** — `DeviceKeyGuard` (`X-Device-Key`) para endpoints de ingestión. RF-2, RF-3.
+- [x] **BE-017** — Revocar/regenerar key. RF-4.
+- [x] **BE-018** — Online/offline por `lastSeenAt` (>5 min). RF-5.
   Hecho cuando: sin key/con key inválida/revocada → 401 sin persistir; key vieja tras regenerar → 401; dispositivo sin lecturas recientes → offline en `GET /devices`.
 
 ## Weather (parte de la spec de riego)
