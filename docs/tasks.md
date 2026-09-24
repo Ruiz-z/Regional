@@ -38,19 +38,19 @@ Rama: `feature/000-bootstrap-backend` desde `dev`.
 ## Identity — Spec 001
 Rama: `feature/001-autenticacion` desde `dev`.
 
-- [ ] **BE-007** — `identity.module`, `UsersService` (crear con bcrypt, buscar por email). RF-7.
-- [ ] **BE-008** — `POST /auth/login`: JWT `{userId, role}`, expira 24h. RF-1, RF-2.
-- [ ] **BE-009** — `JwtAuthGuard` + `RolesGuard` (`@Roles('ADMIN')`) en `src/common/`. RF-3, RF-4, RF-5.
-- [ ] **BE-010** — `POST /users` (solo Admin, alta de Agricultor). RF-6.
+- [x] **BE-007** — `identity.module`, `UsersService` (crear con bcrypt, buscar por email). RF-7.
+- [x] **BE-008** — `POST /auth/login`: JWT `{userId, role}`, expira 24h. RF-1, RF-2.
+- [x] **BE-009** — `JwtAuthGuard` + `RolesGuard` (`@Roles('ADMIN')`) en `src/common/`. RF-3, RF-4, RF-5.
+- [x] **BE-010** — `POST /users` (solo Admin, alta de Agricultor). RF-6.
   Hecho cuando (en orden): hash≠password → login 200/401 correcto → endpoint de prueba 401/403/200 según token/rol → Admin crea Agricultor (201), Agricultor no puede (403).
 
 ## Parcels — Spec 002
-Rama: `feature/002-parcelas-zonas` desde `dev`.
+Rama: `feature/002-parcelas-zonas` desde `feature/001-autenticacion` (depende del JWT/roles de identity).
 
-- [ ] **BE-011** — CRUD `Parcel` (`/parcels`) con `ownerId` del JWT. RF-1.
-- [ ] **BE-012** — CRUD `Zone` anidado (`/parcels/:id/zones`). RF-2.
-- [ ] **BE-013** — Guard de ownership (Agricultor solo lo suyo, Admin todo). RF-3, RF-4.
-- [ ] **BE-014** — Cascada al borrar parcela (zonas) + desvinculación de dispositivos. RF-5.
+- [x] **BE-011** — CRUD `Parcel` (`/parcels`) con `ownerId` del JWT. RF-1.
+- [x] **BE-012** — CRUD `Zone` anidado (`/parcels/:id/zones`). RF-2.
+- [x] **BE-013** — Guard de ownership (Agricultor solo lo suyo, Admin todo). RF-3, RF-4.
+- [x] **BE-014** — Cascada al borrar parcela (zonas) + desvinculación de dispositivos. RF-5.
   Hecho cuando: las 4 combinaciones de rol/ownership responden como en la spec; borrar parcela con zonas+dispositivo deja 0 zonas y el dispositivo sigue existiendo.
 
 ## Devices — Spec 003
@@ -138,14 +138,14 @@ Rama: `feature/004-riego-inteligente-web` desde `dev`. Depende de BE-023/BE-024.
 ## Detalle de parcela/zona — Spec 004 + 005
 Rama: misma `feature/004-riego-inteligente-web`. Depende de BE-023/BE-024, BE-028/BE-029/BE-030.
 
-- [ ] **FE-005** — `features/parcels/parcel-detail`: plano de zonas (grid) — réplica de `site/parcela.html`.
-- [ ] **FE-006** — Panel de zona + botón "Activar tratamiento" — visible/habilitado **solo si `role=AGRICULTOR` dueño** y estado Monitoreo/Intervención; llama `POST /zones/:id/treat`.
+- [x] **FE-005** — `features/parcels/parcel-detail`: plano de zonas (grid) — réplica de `site/parcela.html`.
+- [x] **FE-006** — Panel de zona + botón "Activar tratamiento" — visible/habilitado **solo si `role=AGRICULTOR` dueño** y estado Monitoreo/Intervención; llama `POST /zones/:id/treat`.
   Hecho cuando: Agricultor dueño con zona en Monitoreo ve el botón habilitado y funcional; Admin no lo ve en absoluto (no solo disabled).
 
 ## Notificaciones — Spec 006
 Rama: `feature/006-notificaciones-web` desde `dev`. Depende de BE-031/BE-032/BE-036.
 
-- [ ] **FE-007** — `features/notifications`: listado con severidad informativa/crítica distinta — réplica de `site/notificaciones.html`; marcar leído al abrir.
+- [x] **FE-007** — `features/notifications`: listado con severidad informativa/crítica distinta — réplica de `site/notificaciones.html`; marcar leído al abrir.
   Hecho cuando: crítica se ve visualmente distinta de informativa; el estado leído persiste tras recargar.
 
 ## Histórico y reportes — Spec 007
