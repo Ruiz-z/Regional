@@ -26,7 +26,10 @@ describe('ParcelsService', () => {
       device: { updateMany: jest.fn() },
       $transaction: jest.fn((ops: unknown[]) => Promise.all(ops)),
     };
-    service = new ParcelsService(prisma as unknown as PrismaService);
+    service = new ParcelsService(
+      prisma as unknown as PrismaService,
+      { attach: (zones: unknown) => Promise.resolve(zones) } as never,
+    );
   });
 
   it('en lista, el Agricultor solo ve las suyas', async () => {

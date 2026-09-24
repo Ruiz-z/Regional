@@ -1,24 +1,42 @@
 import type { Parcel, Zone, ZonePestState } from "@/shared/types/parcel";
+
+interface ApiZoneStatus {
+  latestReading: { humidity: number; temperature: number; createdAt: string } | null;
+  pestLevel: ZonePestState;
+  lastTreatmentAt: string | null;
+}
+
 export type ParcelResponse = Pick<
   Parcel,
   "id" | "ownerId" | "name" | "location" | "crop"
 > & {
-  zones?: Pick<Zone, "id" | "parcelId" | "name" | "humidityThreshold">[];
+  zones?: (Pick<Zone, "id" | "parcelId" | "name" | "humidityThreshold"> &
+    Partial<ApiZoneStatus>)[];
 };
+
 export function mapParcel(p: ParcelResponse): Parcel {
   return {
     ...p,
     areaHa: null,
     zoneCount: p.zones?.length ?? 0,
-    lastReadAt: null,
+    lastReadAt:
+      p.zones
+        ?.map((z) => z.latestReading?.createdAt)
+        .filter((v): v is string => !!v)
+        .sort()
+        .at(-1) ?? null,
     zones: (p.zones ?? []).map((z) => ({
       ...z,
-      latestHumidity: null,
-      latestTemperature: null,
-      pestState: "UNKNOWN",
-      irrigation: "UNKNOWN",
+      latestHumidity: z.latestReading?.humidity ?? null,
+      latestTemperature: z.latestReading?.temperature ?? null,
+      pestState: z.pestLevel ?? "UNKNOWN",
+      irrigation: !z.latestReading
+        ? "UNKNOWN"
+        : z.latestReading.humidity < z.humidityThreshold
+          ? "REGANDO"
+          : "NORMAL",
       pestDetectionCount: null,
-      lastTreatmentAt: null,
+      lastTreatmentAt: z.lastTreatmentAt ?? null,
     })),
   };
 }

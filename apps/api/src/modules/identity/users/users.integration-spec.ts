@@ -94,4 +94,20 @@ describe('Users (integración)', () => {
     expect(res.body).toEqual(expect.any(Object));
     expect(accessTokenOf(res)).toBeDefined();
   });
+
+  it('GET /users/me devuelve el usuario real (con email) sin el passwordHash', async () => {
+    const loginRes = await login(agricultorEmail, 'agro12345');
+    const res = await request(app.getHttpServer())
+      .get('/users/me')
+      .set('Authorization', `Bearer ${accessTokenOf(loginRes)}`);
+    expect(res.status).toBe(200);
+    const body = res.body as {
+      email: string;
+      role: string;
+      passwordHash?: string;
+    };
+    expect(body.email).toBe(agricultorEmail);
+    expect(body.role).toBe(UserRole.AGRICULTOR);
+    expect(body.passwordHash).toBeUndefined();
+  });
 });

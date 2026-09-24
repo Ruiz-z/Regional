@@ -38,7 +38,7 @@ export class ParcelsController {
   @Get(':id')
   @UseGuards(ParcelOwnerGuard)
   findOne(@CurrentParcel() parcel: Parcel) {
-    return parcel;
+    return this.parcelsService.findOne(parcel.id);
   }
 
   @Patch(':id')

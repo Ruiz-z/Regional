@@ -66,13 +66,15 @@ describe('Auth (integración)', () => {
     expect(res.status).toBe(401);
   });
 
-  it('GET /users/me devuelve userId y role con token válido', async () => {
+  it('GET /users/me devuelve el usuario real (id, email, role), sin passwordHash', async () => {
     const loginRes = await login(app.getHttpServer(), email, password);
     const res = await request(app.getHttpServer())
       .get('/users/me')
       .set('Authorization', `Bearer ${accessTokenOf(loginRes)}`);
     expect(res.status).toBe(200);
-    expect(res.body).toMatchObject({ role: UserRole.AGRICULTOR });
-    expect((res.body as { userId?: string }).userId).toBeDefined();
+    expect(res.body).toMatchObject({ email, role: UserRole.AGRICULTOR });
+    const body = res.body as { id?: string; passwordHash?: string };
+    expect(body.id).toBeDefined();
+    expect(body.passwordHash).toBeUndefined();
   });
 });

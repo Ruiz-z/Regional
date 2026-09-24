@@ -1,4 +1,4 @@
-import * as Notifications from "expo-notifications";
+import Notifications from "@/shared/lib/notifications";
 import { useState } from "react";
 import { Linking, Platform, ScrollView } from "react-native";
 import { useAuth } from "@/shared/contexts/AuthContext";
