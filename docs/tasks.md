@@ -38,10 +38,10 @@ Rama: `feature/000-bootstrap-backend` desde `dev`.
 ## Identity — Spec 001
 Rama: `feature/001-autenticacion` desde `dev`.
 
-- [ ] **BE-007** — `identity.module`, `UsersService` (crear con bcrypt, buscar por email). RF-7.
-- [ ] **BE-008** — `POST /auth/login`: JWT `{userId, role}`, expira 24h. RF-1, RF-2.
-- [ ] **BE-009** — `JwtAuthGuard` + `RolesGuard` (`@Roles('ADMIN')`) en `src/common/`. RF-3, RF-4, RF-5.
-- [ ] **BE-010** — `POST /users` (solo Admin, alta de Agricultor). RF-6.
+- [x] **BE-007** — `identity.module`, `UsersService` (crear con bcrypt, buscar por email). RF-7.
+- [x] **BE-008** — `POST /auth/login`: JWT `{userId, role}`, expira 24h. RF-1, RF-2.
+- [x] **BE-009** — `JwtAuthGuard` + `RolesGuard` (`@Roles('ADMIN')`) en `src/common/`. RF-3, RF-4, RF-5.
+- [x] **BE-010** — `POST /users` (solo Admin, alta de Agricultor). RF-6.
   Hecho cuando (en orden): hash≠password → login 200/401 correcto → endpoint de prueba 401/403/200 según token/rol → Admin crea Agricultor (201), Agricultor no puede (403).
 
 ## Parcels — Spec 002
