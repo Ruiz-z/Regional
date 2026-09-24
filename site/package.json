@@ -1,0 +1,11 @@
+{
+  "name": "smartriego-site-qa",
+  "private": true,
+  "description": "Screenshots de QA visual de site/ (no es la app real, solo tooling de verificación).",
+  "scripts": {
+    "shots": "node shot.js"
+  },
+  "devDependencies": {
+    "playwright": "^1.48.0"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "v": 3,
+  "attachments": {},
+  "createdOnFiles": { "v": 1, "at": "2026-09-23T21:05:00Z" },
+  "title": "SmartRiego MX — Web",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Login.dc.html": { "x": -1360, "y": 80, "w": 1280, "h": 800, "title": "1 · Login", "is_interactive": true },
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1440, "h": 960, "title": "2 · Dashboard principal (Agricultor)", "is_interactive": true },
+    "Parcela.dc.html": { "x": 1560, "y": 0, "w": 1440, "h": 900, "title": "3 · Detalle de parcela + alerta de plaga", "is_interactive": true },
+    "Historico.dc.html": { "x": 3120, "y": 0, "w": 1440, "h": 900, "title": "4 · Histórico y reportes", "is_interactive": true },
+    "Notificaciones.dc.html": { "x": 4680, "y": 0, "w": 1440, "h": 900, "title": "5 · Notificaciones", "is_interactive": true },
+    "GestionParcelas.dc.html": { "x": 1560, "y": 1080, "w": 1440, "h": 900, "title": "6 · Gestión de parcelas y zonas", "is_interactive": true },
+    "Dispositivos.dc.html": { "x": 0, "y": 1080, "w": 1440, "h": 900, "title": "7 · Admin — Dispositivos IoT", "is_interactive": true },
+    "Usuarios.dc.html": { "x": 3120, "y": 1080, "w": 1440, "h": 900, "title": "8 · Admin — Gestión de usuarios", "is_interactive": true },
+    "Home.dc.html": { "x": 0, "y": 2260, "w": 390, "h": 844, "title": "9 · Móvil — Inicio", "is_interactive": true },
+    "ParcelaMovil.dc.html": { "x": 470, "y": 2260, "w": 390, "h": 844, "title": "10 · Móvil — Detalle de parcela", "is_interactive": true },
+    "ZonaMovil.dc.html": { "x": 940, "y": 2260, "w": 390, "h": 844, "title": "11 · Móvil — Zona con alerta confirmada", "is_interactive": true },
+    "NotificacionesMovil.dc.html": { "x": 1410, "y": 2260, "w": 390, "h": 844, "title": "12 · Móvil — Notificaciones", "is_interactive": true }
+  },
+  "order": ["Login.dc.html", "Main.dc.html", "Parcela.dc.html", "Historico.dc.html", "Notificaciones.dc.html", "GestionParcelas.dc.html", "Dispositivos.dc.html", "Usuarios.dc.html", "Home.dc.html", "ParcelaMovil.dc.html", "ZonaMovil.dc.html", "NotificacionesMovil.dc.html"],
+  "notes": {
+    "flow": { "x": -1360, "y": -280, "text": "SmartRiego MX — flujo navegable", "kind": "title1", "maxW": 2600 },
+    "flow2": { "x": 0, "y": -280, "text": "Web", "kind": "title1", "maxW": 2600, "size": "m" },
+    "flow3": { "x": 0, "y": 1900, "text": "Móvil", "kind": "title1", "maxW": 1600, "size": "m" }
+  },
+  "designSystems": [
+    { "title": "SmartRiego MX", "namespace": "smartriego", "artifact": "https://claude.ai/artifact/3kFsX5Lck1cQN4kc7A5WvG", "version": "1790195869-3728", "copiedAt": "2026-09-23T21:05:00Z" }
+  ]
+}

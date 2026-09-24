@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Login — SmartRiego MX</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/smartriego/tokens.css">
+<link rel="stylesheet" href="ds/smartriego/components/bundle.css">
+<script src="ds/smartriego/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap");
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans)}
+.sr-field{display:flex;flex-direction:column;gap:6px}
+.sr-field label{font-size:14px;font-weight:600;color:var(--ink)}
+.sr-field input{font:inherit;font-size:16px;font-family:var(--font-sans);padding:12px 14px;border-radius:var(--radius-md);border:1.5px solid var(--border-strong);background:var(--surface);color:var(--ink);box-sizing:border-box}
+.sr-field input:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1280px; height: 800px; box-sizing: border-box; display: flex; background: var(--bg); font-family: var(--font-sans);">
+
+  <div style="width: 480px; height: 800px; position: relative; overflow: hidden; background: var(--surface-inverse); flex: none;">
+    <svg viewBox="0 0 480 800" width="480" height="800" style="position:absolute; inset:0;">
+      <rect x="0" y="-40" width="200" height="420" rx="8" fill="var(--primary)"/>
+      <rect x="216" y="520" width="140" height="120" rx="8" fill="var(--suede-green)"/>
+      <rect x="216" y="360" width="80" height="48" rx="8" fill="var(--accent)"/>
+      <rect x="32" y="360" width="48" height="10" rx="5" fill="var(--ink-on-inverse)" opacity="0.55"/>
+      <rect x="88" y="360" width="72" height="10" rx="5" fill="var(--ink-on-inverse)" opacity="0.55"/>
+      <rect x="32" y="384" width="96" height="10" rx="5" fill="var(--ink-on-inverse)" opacity="0.55"/>
+      <rect x="32" y="408" width="64" height="10" rx="5" fill="var(--ink-on-inverse)" opacity="0.55"/>
+      <rect x="104" y="408" width="40" height="10" rx="5" fill="var(--ink-on-inverse)" opacity="0.55"/>
+    </svg>
+    <div style="position:absolute; left: 40px; bottom: 64px; right:40px; color: var(--ink-on-inverse);">
+      <div style="font-family: var(--font-display); font-weight: 700; font-size: 32px; line-height: 1.05; letter-spacing:-.01em;">SmartRiego<br>MX</div>
+      <div style="margin-top: 12px; font-size: 15px; line-height: 22px; color: var(--ink-on-inverse); opacity: .75; max-width: 320px;">Riego y control de plagas por zona, en tiempo real.</div>
+    </div>
+  </div>
+
+  <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box;">
+    <div style="width: 380px; display: flex; flex-direction: column; gap: 28px;">
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <h1 style="margin: 0; font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--ink);">Bienvenido de vuelta</h1>
+        <p style="margin: 0; font-size: 15px; line-height: 22px; color: var(--ink-muted);">Entra para ver el estado de tus parcelas.</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 18px;">
+        <div class="sr-field">
+          <label for="email">Correo</label>
+          <input id="email" type="email" placeholder="tú@correo.com" value="ana.torres@smartriego.mx">
+        </div>
+        <div class="sr-field">
+          <label for="pass">Contraseña</label>
+          <input id="pass" type="password" placeholder="••••••••" value="••••••••••">
+        </div>
+        <div style="display:flex; justify-content: flex-end;">
+          <a href="#" style="font-size: 13px; color: var(--accent); text-decoration: none; font-weight: 600;">¿Olvidaste tu contraseña?</a>
+        </div>
+      </div>
+
+      <a href="Main.dc.html" class="sr-btn sr-btn-primary" style="width: 100%; justify-content: center; padding: 12px 16px; font-size: 16px; text-decoration: none; box-sizing: border-box;">Iniciar sesión</a>
+
+      <div style="text-align: center; font-size: 13px; color: var(--ink-muted); border-top: 1px solid var(--border); padding-top: 18px;">
+        SmartRiego MX · plataforma de agricultura de precisión
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Dashboard — SmartRiego MX</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/smartriego/tokens.css">
+<link rel="stylesheet" href="ds/smartriego/components/bundle.css">
+<script src="ds/smartriego/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@500;600;700&family=Geist+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap");
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans)}
+.navlink{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-md);font-size:14px;font-weight:600;color:var(--ink-on-inverse);text-decoration:none;opacity:.72}
+.navlink.active{background:rgba(223,223,212,0.12);opacity:1}
+.parcel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:20px;display:flex;flex-direction:column;gap:14px;flex:1;text-decoration:none;color:inherit;cursor:pointer}
+.parcel-card:hover{box-shadow:var(--shadow-overlay)}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:20px;box-sizing:border-box}
+.bell{position:relative;width:38px;height:38px;border-radius:var(--radius-md);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--ink);flex:none}
+.bell-dot{position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:999px;background:var(--status-danger)}
+</style>
+</helmet>
+<div style="width: 1440px; height: 960px; box-sizing: border-box; display: flex; background: var(--bg); font-family: var(--font-sans); overflow: hidden;">
+
+  <div style="width: 240px; flex: none; background: var(--surface-inverse); color: var(--ink-on-inverse); display: flex; flex-direction: column; padding: 24px 16px; box-sizing: border-box; gap: 28px;">
+    <div style="font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: -.01em; padding: 0 8px;">SmartRiego MX</div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <a href="Main.dc.html" class="navlink active">Dashboard</a>
+      <a href="Parcela.dc.html" class="navlink">Mis parcelas</a>
+      <a href="GestionParcelas.dc.html" class="navlink">Gestionar parcelas y zonas</a>
+      <a href="Historico.dc.html" class="navlink">Histórico y reportes</a>
+      <a href="Perfil.dc.html" class="navlink">Perfil</a>
+    </div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid rgba(223,223,212,0.16); padding-top: 16px;">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 0 8px;">
+        <div style="width: 32px; height: 32px; border-radius: 999px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: var(--on-primary); flex: none;">AT</div>
+        <div style="min-width: 0;">
+          <div style="font-size: 13px; font-weight: 700; white-space: nowrap;">Ana Torres</div>
+          <div style="font-size: 12px; opacity: .65;">Mi operación</div>
+        </div>
+      </div>
+      <a href="Dispositivos.dc.html" style="font-size: 12px; font-weight: 600; color: var(--ink-on-inverse); opacity: .6; text-decoration: none; padding: 0 8px;">Cambiar a modo Administrador →</a>
+    </div>
+  </div>
+
+  <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden;">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; border-bottom: 1px solid var(--border); flex: none;">
+      <div>
+        <h1 style="margin: 0; font-family: var(--font-display); font-size: 24px; font-weight: 700; color: var(--ink);">Buenos días, Ana</h1>
+        <x-import component-from-global-scope="SmartRiego.ParcelSelector" value="norte" style="margin-top: 10px;" options="{{ parcelOptions }}"></x-import>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="Notificaciones.dc.html" class="bell" aria-label="Notificaciones">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 6.5a4 4 0 0 1 8 0c0 3 1 4 1 4H3s1-1 1-4Z"/><path d="M6.5 12.5a1.5 1.5 0 0 0 3 0"/></svg>
+          <span class="bell-dot"></span>
+        </a>
+        <a href="Historico.dc.html" class="sr-btn sr-btn-secondary" style="text-decoration: none;">Ver histórico</a>
+      </div>
+    </div>
+
+    <div style="flex: 1; overflow-y: auto; padding: 24px 32px 40px; display: flex; flex-direction: column; gap: 24px; box-sizing: border-box;">
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <x-import component-from-global-scope="SmartRiego.AlertBanner" title="Foco de plaga confirmado" style="flex: 1;">Parcela Norte · Zona B3 · 7 detecciones confirmadas · hace 4 min</x-import>
+        <a href="Parcela.dc.html" class="sr-btn" style="background: var(--on-danger); color: var(--danger-solid); text-decoration: none; flex: none;">Ver zona</a>
+      </div>
+
+      <x-import component-from-global-scope="SmartRiego.AlertBanner" title="Anomalía de riego" severity="critica">Parcela Norte · Zona B1 · 3 riegos seguidos sin subir humedad · hace 20 min</x-import>
+
+      <x-import component-from-global-scope="SmartRiego.AlertBanner" title="Corrección por lluvia insuficiente" severity="informativa">Parcela Norte · Zona A2 · el sistema pospuso el riego, no fue suficiente, inició riego de respaldo · hace 1 h</x-import>
+
+      <div class="panel">
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">Humedad reciente por zona</div>
+        <div style="display: flex; gap: 16px; font-size: 12px; color: var(--ink-muted); margin-bottom: 6px;">
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--chart-water);margin-right:6px;"></span>A1</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--chart-savings);margin-right:6px;"></span>A2</span>
+          <span><span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:var(--status-warn);margin-right:6px;"></span>B1</span>
+        </div>
+        <svg viewBox="0 0 960 160" width="100%" height="160" role="img" aria-label="Humedad reciente por zona, últimas horas">
+          <line x1="30" y1="16" x2="30" y2="130" stroke="var(--chart-grid)" stroke-width="1"/>
+          <line x1="30" y1="130" x2="940" y2="130" stroke="var(--chart-grid)" stroke-width="1"/>
+          <line x1="30" y1="16" x2="940" y2="16" stroke="var(--chart-grid)" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="30" y1="73" x2="940" y2="73" stroke="var(--chart-grid)" stroke-width="1" stroke-dasharray="2 4"/>
+          <text x="22" y="134" text-anchor="end" font-size="11" fill="var(--ink-muted)">0%</text>
+          <text x="22" y="77" text-anchor="end" font-size="11" fill="var(--ink-muted)">50%</text>
+          <text x="22" y="20" text-anchor="end" font-size="11" fill="var(--ink-muted)">100%</text>
+          <polyline points="60,60 200,55 340,62 480,58 620,60 760,57 900,58" fill="none" stroke="var(--chart-water)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="60,95 200,92 340,90 480,88 620,85 760,87 900,84" fill="none" stroke="var(--chart-savings)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="60,110 200,105 340,101 480,100 620,103 760,108 900,109" fill="none" stroke="var(--status-warn)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5"/>
+          <g font-size="11" fill="var(--ink-muted)" text-anchor="middle"><text x="60" y="146">08:00</text><text x="200" y="146">10:00</text><text x="340" y="146">12:00</text><text x="480" y="146">14:00</text><text x="620" y="146">16:00</text><text x="760" y="146">18:00</text><text x="900" y="146">Ahora</text></g>
+        </svg>
+      </div>
+
+      <div style="display: flex; gap: 20px;">
+        <div class="panel" style="flex: 1;">
+          <div style="font-size: 14px; font-weight: 700; margin-bottom: 8px;">Consumo de agua (minutos regados)</div>
+          <svg viewBox="0 0 960 120" width="100%" height="120" role="img" aria-label="Consumo de agua, minutos regados por día">
+            <line x1="30" y1="10" x2="30" y2="95" stroke="var(--chart-grid)" stroke-width="1"/>
+            <line x1="30" y1="95" x2="940" y2="95" stroke="var(--chart-grid)" stroke-width="1"/>
+            <g fill="var(--chart-water)">
+              <rect x="50" y="55" width="60" height="40" rx="3"/><rect x="150" y="40" width="60" height="55" rx="3"/><rect x="250" y="60" width="60" height="35" rx="3"/><rect x="350" y="30" width="60" height="65" rx="3"/><rect x="450" y="45" width="60" height="50" rx="3"/><rect x="550" y="35" width="60" height="60" rx="3"/><rect x="650" y="50" width="60" height="45" rx="3"/>
+            </g>
+            <g font-size="11" fill="var(--ink-muted)" text-anchor="middle"><text x="80" y="110">Lun</text><text x="180" y="110">Mar</text><text x="280" y="110">Mié</text><text x="380" y="110">Jue</text><text x="480" y="110">Vie</text><text x="580" y="110">Sáb</text><text x="680" y="110">Dom</text></g>
+          </svg>
+        </div>
+        <div class="panel" style="width: 260px; flex: none; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-size: 14px; font-weight: 700;">Estado de plagas por zona</div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px;"><span><x-import component-from-global-scope="SmartRiego.StatusBadge" status="normal" size="sm"></x-import></span><span style="font-weight: 700;">10</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px;"><span><x-import component-from-global-scope="SmartRiego.StatusBadge" status="monitoreo" size="sm"></x-import></span><span style="font-weight: 700;">1</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px;"><span><x-import component-from-global-scope="SmartRiego.StatusBadge" status="intervencion" size="sm"></x-import></span><span style="font-weight: 700;">1</span></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 12px;">Tus parcelas</div>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px;">
+
+          <a href="Parcela.dc.html" class="parcel-card" style="border: 2px solid var(--status-danger);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <div style="font-size: 16px; font-weight: 700; color: var(--ink);">Parcela Norte</div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;">Vid · 3.2 ha · 6 zonas</div>
+              </div>
+              <x-import component-from-global-scope="SmartRiego.StatusBadge" status="intervencion" label="1 zona en intervención"></x-import>
+            </div>
+            <x-import component-from-global-scope="SmartRiego.ParcelGrid" columns="6" selected="B3" zones="{{ zonesNorte }}"></x-import>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-muted); border-top: 1px solid var(--border); padding-top: 12px;">
+              <span>Última lectura · hace 3 min</span>
+              <span style="color: var(--accent); font-weight: 600;">Ver parcela →</span>
+            </div>
+          </a>
+
+          <a href="Parcela.dc.html" class="parcel-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <div style="font-size: 16px; font-weight: 700; color: var(--ink);">Parcela Sur</div>
+                <div style="font-size: 13px; color: var(--ink-muted); margin-top: 2px;">Vid · 2.1 ha · 6 zonas</div>
+              </div>
+              <x-import component-from-global-scope="SmartRiego.StatusBadge" status="normal" label="Todo normal"></x-import>
+            </div>
+            <x-import component-from-global-scope="SmartRiego.ParcelGrid" columns="6" zones="{{ zonesSur }}"></x-import>
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--ink-muted); border-top: 1px solid var(--border); padding-top: 12px;">
+              <span>Última lectura · hace 5 min</span>
+              <span style="color: var(--accent); font-weight: 600;">Ver parcela →</span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+
+      <div>
+        <div style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 12px;">Actividad reciente</div>
+        <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); padding: 20px 24px;">
+          <x-import component-from-global-scope="SmartRiego.EventTimeline" events="{{ events }}"></x-import>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":960}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      parcelOptions: [
+        { id: "todas", label: "Todas mis parcelas" },
+        { id: "norte", label: "Parcela Norte" },
+        { id: "sur", label: "Parcela Sur" }
+      ],
+      zonesNorte: [
+        { name: "A1", moisture: 58, irrigation: "regando" },
+        { name: "A2", moisture: 52, irrigation: "corrigiendo" },
+        { name: "A3", moisture: 49 },
+        { name: "B1", moisture: 41, irrigation: "anomalia" },
+        { name: "B2", moisture: 46, pest: "monitoreo" },
+        { name: "B3", moisture: 31, pest: "intervencion" }
+      ],
+      zonesSur: [
+        { name: "C1", moisture: 55 },
+        { name: "C2", offline: true },
+        { name: "C3", moisture: 51 },
+        { name: "C4", moisture: 48 },
+        { name: "C5", moisture: 50 },
+        { name: "C6", moisture: 53, irrigation: "regando" }
+      ],
+      events: [
+        { type: "plaga", title: "Plaga confirmada en Parcela Norte · B3", meta: "Hoy 10:05 · 7 detecciones" },
+        { type: "anomalia", title: "Anomalía de riego en Parcela Norte · B1", meta: "Hoy 09:50 · 3 riegos sin subir humedad" },
+        { type: "corrigiendo", title: "Corrección por lluvia insuficiente en A2", meta: "Hoy 08:15 · riego de respaldo iniciado" },
+        { type: "riego", title: "Riego ejecutado en Parcela Sur · C6", meta: "Hoy 06:30 · 18 min" }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

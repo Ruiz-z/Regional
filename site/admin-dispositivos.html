@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dispositivos IoT — SmartRiego MX</title>
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/bundle.css">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="page">
+  <div class="sidebar admin">
+  <div><div class="brand">SmartRiego MX</div><div class="tag-admin">VISTA DE PLATAFORMA</div></div>
+  <div style="display:flex;flex-direction:column;gap:2px;">
+    <div class="navlink" style="opacity:.4;cursor:default;">Resumen</div>
+    <a href="admin-usuarios.html" class="navlink">Gestión de usuarios</a>
+    <a href="admin-dispositivos.html" class="navlink active">Dispositivos IoT</a>
+    <div class="navlink" style="opacity:.4;cursor:default;">Configuración global</div>
+  </div>
+  <div style="margin-top:auto;border-top:1px solid rgba(223,223,212,0.16);padding-top:16px;">
+    <a href="dashboard.html" style="font-size:12px;font-weight:600;color:var(--ink-on-inverse);opacity:.75;text-decoration:none;padding:0 8px;">← Volver a mi operación</a>
+  </div>
+</div>
+  <div class="main">
+    <div class="topbar">
+      <div><h1 class="h1">Dispositivos IoT</h1><p class="sub">3 dispositivos registrados en toda la plataforma</p></div>
+      <button type="button" class="sr-btn sr-btn-primary" style="" onclick="document.getElementById('newdev').style.display='flex'; this.style.display='none';">+ Registrar dispositivo</button>
+    </div>
+    <div class="content">
+      <div id="newdev" class="panel" style="display:none;border:2px solid var(--primary);flex-direction:column;gap:14px;">
+        <div style="font-size:15px;font-weight:700;">Nuevo dispositivo registrado</div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div><div class="stat-label">NOMBRE</div><div style="font-size:14px;font-weight:600;margin-top:2px;">ESP32-04</div></div>
+          <div><div class="stat-label">ASIGNAR A</div><div style="font-size:14px;font-weight:600;margin-top:2px;">Parcela Sur · sin zona</div></div>
+          <div style="flex:1;min-width:260px;"><div class="stat-label">API KEY</div>
+            <div style="font-family:var(--font-mono);font-size:13px;background:var(--surface-sunken);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;margin-top:2px;word-break:break-all;">sr_live_8f3a1c2e9b47d0f6a2c8e451</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:var(--ink-muted);">Copia esta clave ahora: no vuelve a mostrarse completa.</div>
+      </div>
+      <div class="panel" style="padding:0;">
+        <div class="drow dhead"><div>DISPOSITIVO</div><div>PARCELA / ZONA</div><div>ESTADO</div><div>ÚLTIMA LECTURA</div><div></div></div>
+        <div class="drow"><div style="font-weight:700;">ESP32-01</div><div style="color:var(--ink-muted);">Parcela Norte · B3</div><div><span class="sr-badge sr-tone-ok sr-badge-sm"><svg class="sr-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5" fill="currentColor"/></svg>Online</span></div><div style="font-family:var(--font-mono);color:var(--ink-muted);">hace 2 min</div><a href="#" style="color:var(--accent);font-weight:600;font-size:13px;text-decoration:none;">Ver API key</a></div>
+        <div class="drow"><div style="font-weight:700;">RPi-02</div><div style="color:var(--ink-muted);">Parcela Sur · C6</div><div><span class="sr-badge sr-tone-ok sr-badge-sm"><svg class="sr-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5" fill="currentColor"/></svg>Online</span></div><div style="font-family:var(--font-mono);color:var(--ink-muted);">hace 5 min</div><a href="#" style="color:var(--accent);font-weight:600;font-size:13px;text-decoration:none;">Ver API key</a></div>
+        <div class="drow"><div style="font-weight:700;">ESP32-03</div><div style="color:var(--ink-muted);">Parcela Sur · C2</div><div><span class="sr-badge sr-tone-off sr-badge-sm"><svg class="sr-icon" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4.2 11.8 11.8 4.2" stroke="currentColor" stroke-width="2"/></svg>Offline</span></div><div style="font-family:var(--font-mono);color:var(--ink-muted);">hace 42 min</div><a href="#" style="color:var(--accent);font-weight:600;font-size:13px;text-decoration:none;">Ver API key</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
