@@ -3,22 +3,23 @@
 // PestTreatment.trigger y la clasificación Normal/Monitoreo/Intervención
 // de la spec-005 RF-4.
 
-export type ZonePestState = 'NORMAL' | 'MONITOREO' | 'INTERVENCION';
+export type ZonePestState = "NORMAL" | "MONITOREO" | "INTERVENCION" | "UNKNOWN";
 
 // Estado de riego visible: deriva de IrrigationDecision (REGAR/ESPERAR),
 // corrección por lluvia (spec-004 RF-8) y anomalía (spec-004 RF-9).
-export type ZoneIrrigationState = 'NORMAL' | 'REGANDO' | 'CORRIGIENDO' | 'ANOMALIA';
+export type ZoneIrrigationState =
+  "NORMAL" | "REGANDO" | "CORRIGIENDO" | "ANOMALIA" | "UNKNOWN";
 
 export interface Zone {
   id: string;
   parcelId: string;
   name: string;
   humidityThreshold: number;
-  latestHumidity: number;
-  latestTemperature: number;
+  latestHumidity: number | null;
+  latestTemperature: number | null;
   pestState: ZonePestState;
   irrigation: ZoneIrrigationState;
-  pestDetectionCount: number;
+  pestDetectionCount: number | null;
   lastTreatmentAt: string | null;
 }
 
@@ -28,7 +29,7 @@ export interface Parcel {
   name: string;
   location: string;
   crop: string;
-  areaHa: number;
+  areaHa: number | null;
   zoneCount: number;
   zones: Zone[];
   lastReadAt: string | null;
@@ -36,9 +37,9 @@ export interface Parcel {
 
 // Estado agregado de la parcela: si alguna zona está en Intervención,
 // la parcela muestra el tono más crítico de su zona (spec-005 RF-4).
-export type ParcelAggregateState = 'NORMAL' | 'INTERVENCION';
+export type ParcelAggregateState = ZonePestState;
 
-export interface ParcelSummary extends Omit<Parcel, 'zones'> {
+export interface ParcelSummary extends Omit<Parcel, "zones"> {
   aggregate: ParcelAggregateState;
   alertZoneName: string | null;
 }

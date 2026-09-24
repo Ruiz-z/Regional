@@ -8,6 +8,10 @@ export interface AppConfig {
     apiKey: string;
     baseUrl: string;
   };
+  resend: {
+    apiKey: string;
+    fromEmail: string;
+  };
 }
 
 export const loadConfig = (): AppConfig => ({
@@ -21,5 +25,11 @@ export const loadConfig = (): AppConfig => ({
     baseUrl:
       process.env.OPENWEATHER_BASE_URL ??
       'https://api.openweathermap.org/data/2.5/weather',
+  },
+  resend: {
+    apiKey: process.env.RESEND_API_KEY ?? '',
+    fromEmail:
+      process.env.RESEND_FROM_EMAIL ??
+      'SmartRiego MX <notificaciones@smartriego.mx>',
   },
 });

@@ -1,3 +1,4 @@
+import { NotificationsService } from '../notifications/notifications.service';
 import { PestService } from './pest.service';
 
 describe('PestService', () => {
@@ -6,15 +7,27 @@ describe('PestService', () => {
     pestDetection: { create: jest.Mock };
     pestTreatment: { create: jest.Mock };
   };
+  let notifications: { notifyPestAlert: jest.Mock; resetPestAlert: jest.Mock };
   let service: PestService;
 
   beforeEach(() => {
     prisma = {
-      zone: { findUnique: jest.fn().mockResolvedValue({ id: 'zone-a' }) },
+      zone: {
+        findUnique: jest
+          .fn()
+          .mockResolvedValue({ id: 'zone-a', parcel: { ownerId: 'owner-a' } }),
+      },
       pestDetection: { create: jest.fn() },
       pestTreatment: { create: jest.fn().mockResolvedValue({ id: 'tr-1' }) },
     };
-    service = new PestService(prisma as never);
+    notifications = {
+      notifyPestAlert: jest.fn(),
+      resetPestAlert: jest.fn(),
+    };
+    service = new PestService(
+      prisma as never,
+      notifications as unknown as NotificationsService,
+    );
   });
 
   const detect = (count: number) =>
@@ -46,6 +59,25 @@ describe('PestService', () => {
     expect(result.level).toBe('MONITOREO');
     expect(result.treatmentTriggered).toBe(false);
     expect(prisma.pestTreatment.create).not.toHaveBeenCalled();
+  });
+
+  it('spec-006 RF-3: notifica solo al confirmar el foco (frame 3), no en frames posteriores', async () => {
+    await detect(2);
+    await detect(2);
+    await detect(2);
+    expect(notifications.notifyPestAlert).toHaveBeenCalledTimes(1);
+    expect(notifications.notifyPestAlert).toHaveBeenCalledWith(
+      'zone-a',
+      'owner-a',
+      true,
+    );
+    await detect(2);
+    expect(notifications.notifyPestAlert).toHaveBeenCalledTimes(2);
+    expect(notifications.notifyPestAlert).toHaveBeenLastCalledWith(
+      'zone-a',
+      'owner-a',
+      false,
+    );
   });
 
   it('RF-4/RF-5: 3 consecutivos con conteo alto -> Intervención, dispara tratamiento automático', async () => {
