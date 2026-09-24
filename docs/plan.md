@@ -260,3 +260,14 @@ model Notification {
 | `pest` | Spec 005 (RF-1 a RF-10, incluye tratamiento manual del Agricultor) |
 | `notifications` | Spec 006 (RF-1 a RF-10) |
 | `reports` | Spec 007 (RF-1 a RF-5) |
+
+## Despliegue: preproducción vs producción
+
+Dos entornos, dos ramas, dos destinos — no se reemplaza el plan de `constitution.md` #14, se le agrega un escalón previo:
+
+- **Preproducción (rama `test`)**: espejo de `dev` para validar cambios "arriba" antes de tocar `main`.
+  - **Frontend** (`apps/web`): Vercel, gestionado directamente por el equipo (fuera de CI/CD de este repo) — Vercel construye con su propio pipeline de Next.js, no usa `apps/web/Dockerfile`.
+  - **Backend** (`apps/api` + Postgres administrada): Railway, deploy automático en cada push a `test`, build a partir de `apps/api/Dockerfile` (contexto: raíz del repo, para tener acceso a `pnpm-lock.yaml`/`pnpm-workspace.yaml`). Variables de entorno = las mismas de `apps/api/.env.example` (`DATABASE_URL` la da Railway al crear la Postgres del proyecto; el resto se configuran a mano en el dashboard: `JWT_SECRET`, `JWT_EXPIRES_IN`, `OPENWEATHER_API_KEY`, `OPENWEATHER_BASE_URL`, y una vez esté mergeado `feature/006-notificaciones`, también `RESEND_API_KEY`/`RESEND_FROM_EMAIL`). El `Dockerfile` corre `prisma migrate deploy` antes de levantar el server, así que las migraciones se aplican solas en cada deploy.
+  - `apps/vision` no se despliega en Railway por ahora (requiere cámara física); se sigue probando localmente o contra el backend de `test` vía `API_BASE_URL`.
+
+- **Producción (rama `main`)**: sin cambios respecto a `constitution.md` #14 — VM de Azure con `infra/docker-compose.azure.yml` (postgres+api+web+vision en contenedores), desplegado por `deploy.yml` vía SSH en cada push a `main`. Este camino queda listo (Dockerfiles de `apps/api`/`apps/web` ya existen, `docker-compose.azure.yml` corregido) pero no es el foco mientras se valida en `test`/Railway.

@@ -14,7 +14,12 @@ permissions:
   contents: read
 
 env:
-  NODE_VERSION: '20'
+  # pnpm@11.3.0 (packageManager en package.json) requiere Node >= 22.13.
+  NODE_VERSION: '22'
+  # prisma.config.ts resuelve DATABASE_URL al cargar — "prisma generate"
+  # (postinstall de apps/api) la necesita aunque no conecte de verdad.
+  # integration-tests define su propio DATABASE_URL real, que gana sobre este.
+  DATABASE_URL: postgresql://smartriego:smartriego@localhost:5432/smartriego_test
 
 jobs:
   checks:

@@ -25,3 +25,10 @@ apps/vision/__pycache__/
 apps/vision/**/__pycache__/
 apps/vision/.pytest_cache/
 apps/vision/*.pt
+# expo (apps/mobile)
+apps/mobile/.expo/
+
+# cache local de skills de agentes (OpenCode/Claude Code), no es del proyecto
+.agents/
+.claude/
+skills-lock.json
