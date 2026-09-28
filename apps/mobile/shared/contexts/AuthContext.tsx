@@ -13,6 +13,7 @@ import { setAuthToken } from "@/shared/lib/api";
 import type { AuthSession, LoginCredentials } from "@/shared/types/auth";
 import { decodeJwtPayload } from "@/features/login/actions/mockLogin";
 import { login } from "@/features/login/actions/login";
+import { registerPushToken } from "@/features/notifications/lib/usePushRegistration";
 
 const SESSION_KEY = "smartriego.session";
 
@@ -44,6 +45,7 @@ export function AuthProvider({
           ) {
             setAuthToken(restored.token);
             setSession(restored);
+            void registerPushToken();
           }
         }
       })
@@ -63,6 +65,7 @@ export function AuthProvider({
       await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(next));
       setAuthToken(next.token);
       setSession(next);
+      void registerPushToken();
       return next;
     },
     [],
