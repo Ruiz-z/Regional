@@ -16,7 +16,7 @@ const CONSECUTIVE_FRAMES_TO_CONFIRM = 3;
 // dataset todavía, un conteo confirmado >= 5 detecciones/frame escala a
 // Intervención (dispara tratamiento automático); por debajo, Monitoreo.
 const INTERVENTION_COUNT_THRESHOLD = 5;
-const TREATMENT_COOLDOWN_MS = 10 * 60 * 1000;
+const TREATMENT_COOLDOWN_MS = 1 * 60 * 1000;
 
 interface ZonePestState {
   consecutiveFrames: number;
