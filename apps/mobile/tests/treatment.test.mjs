@@ -30,14 +30,14 @@ test("Normal y estado ausente no permiten tratamiento", () => {
     assert.equal(canTreat({ ...valid, pestState }), false);
   assert.equal(canTreat({ ...valid, pestState: "INTERVENCION" }), true);
 });
-test("cooldown de 10 minutos y fechas invalidas fallan cerradas", () => {
+test("cooldown de 1 minuto y fechas invalidas fallan cerradas", () => {
   const now = Date.parse("2026-09-24T10:10:00Z");
   assert.equal(
-    canTreat({ ...valid, lastTreatmentAt: "2026-09-24T10:00:01Z" }, now),
+    canTreat({ ...valid, lastTreatmentAt: "2026-09-24T10:09:01Z" }, now),
     false,
   );
   assert.equal(
-    canTreat({ ...valid, lastTreatmentAt: "2026-09-24T10:00:00Z" }, now),
+    canTreat({ ...valid, lastTreatmentAt: "2026-09-24T10:09:00Z" }, now),
     true,
   );
   for (const lastTreatmentAt of [undefined, "invalid", "2026-09-24T11:00:00Z"])
