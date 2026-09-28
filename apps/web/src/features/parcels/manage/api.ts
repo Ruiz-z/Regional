@@ -1,14 +1,16 @@
 import { apiFetch } from "@/shared/lib/api-client";
 
-export interface ManagedZone { id: string; parcelId: string; name: string; humidityThreshold: number }
+export interface ManagedZone { id: string; parcelId: string; name: string; humidityThreshold: number; areaHectares: number | null }
 export interface ManagedParcel { id: string; ownerId: string; name: string; location: string; crop: string; zones: ManagedZone[] }
+export interface CropCatalogEntry { value: string; label: string; suggestedHumidityThreshold: number }
 export type ParcelInput = Pick<ManagedParcel, "name" | "location" | "crop">;
-export type ZoneInput = Pick<ManagedZone, "name" | "humidityThreshold">;
+export type ZoneInput = Pick<ManagedZone, "name" | "humidityThreshold"> & { areaHectares?: number | null };
 const parcelPath = (id: string) => `/parcels/${encodeURIComponent(id)}`;
 const zonePath = (id: string, zoneId?: string) => `${parcelPath(id)}/zones${zoneId ? `/${encodeURIComponent(zoneId)}` : ""}`;
 
 export const managementApi = {
   list: (token: string, signal?: AbortSignal) => apiFetch<ManagedParcel[]>("/parcels", { signal }, token),
+  cropCatalog: (token: string, signal?: AbortSignal) => apiFetch<CropCatalogEntry[]>("/crop-catalog", { signal }, token),
   createParcel: (token: string, input: ParcelInput) => apiFetch<ManagedParcel>("/parcels", { method: "POST", body: JSON.stringify(input) }, token),
   updateParcel: (token: string, id: string, input: ParcelInput) => apiFetch<ManagedParcel>(parcelPath(id), { method: "PATCH", body: JSON.stringify(input) }, token),
   deleteParcel: (token: string, id: string) => apiFetch<void>(parcelPath(id), { method: "DELETE" }, token),

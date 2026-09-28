@@ -45,6 +45,12 @@ export class ZonesService {
     if (!zone) {
       throw new NotFoundException('Zona no encontrada');
     }
-    await this.prisma.zone.delete({ where: { id: zoneId } });
+    await this.prisma.$transaction([
+      this.prisma.device.updateMany({
+        where: { zoneId },
+        data: { zoneId: null },
+      }),
+      this.prisma.zone.delete({ where: { id: zoneId } }),
+    ]);
   }
 }

@@ -11,6 +11,8 @@ describe('ZonesService', () => {
       update: jest.Mock;
       delete: jest.Mock;
     };
+    device: { updateMany: jest.Mock };
+    $transaction: jest.Mock;
   };
   let service: ZonesService;
 
@@ -23,6 +25,8 @@ describe('ZonesService', () => {
         update: jest.fn(),
         delete: jest.fn(),
       },
+      device: { updateMany: jest.fn() },
+      $transaction: jest.fn((ops: unknown[]) => Promise.all(ops)),
     };
     service = new ZonesService(
       prisma as unknown as PrismaService,
@@ -48,9 +52,13 @@ describe('ZonesService', () => {
     });
   });
 
-  it('borra la zona correcta tras verificar pertenencia', async () => {
+  it('borra la zona correcta tras verificar pertenencia y desvincula sus dispositivos', async () => {
     prisma.zone.findFirst.mockResolvedValue({ id: 'z-1' });
     await service.remove('p-1', 'z-1');
+    expect(prisma.device.updateMany).toHaveBeenCalledWith({
+      where: { zoneId: 'z-1' },
+      data: { zoneId: null },
+    });
     expect(prisma.zone.delete).toHaveBeenCalledWith({ where: { id: 'z-1' } });
   });
 });

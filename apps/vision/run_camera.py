@@ -9,6 +9,7 @@ import cv2
 
 from app.backend_client import BackendClient
 from app.capture_loop import run_loop
+from app.classifier import TeachableMachineClassifier
 from app.config import settings
 from app.detector import YoloDetectionModel
 from app.pest_pipeline import PestPipeline
@@ -25,9 +26,16 @@ def main() -> None:
         ok, frame = camera.read()
         return frame if ok else None
 
-    model = YoloDetectionModel(
-        settings.weights_path, confidence_threshold=settings.confidence_threshold
-    )
+    if settings.model_backend == "classifier":
+        model = TeachableMachineClassifier(
+            settings.classifier_model_path,
+            settings.classifier_labels_path,
+            confidence_threshold=settings.confidence_threshold,
+        )
+    else:
+        model = YoloDetectionModel(
+            settings.weights_path, confidence_threshold=settings.confidence_threshold
+        )
     pipeline = PestPipeline(
         model=model,
         zone_map=settings.zone_map,

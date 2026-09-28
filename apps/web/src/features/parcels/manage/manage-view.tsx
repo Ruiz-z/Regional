@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useAuth } from "@/shared/auth/auth-context";
 import { Button } from "@/shared/components/ui/button";
 import { Topbar } from "@/shared/components/layout/topbar";
-import { managementApi, type ManagedParcel } from "./api";
+import { managementApi, type CropCatalogEntry, type ManagedParcel } from "./api";
 import { ParcelForm, ZoneForm } from "./forms";
 
 type Editor = { kind: "parcel"; id?: string } | { kind: "zone"; parcelId: string; id?: string } | null;
@@ -19,6 +19,7 @@ export function ManageView() {
   const [busy, setBusy] = useState(false);
   const mutation = useRef(false);
   const [editor, setEditor] = useState<Editor>(null);
+  const [cropCatalog, setCropCatalog] = useState<CropCatalogEntry[]>([]);
   const load = useCallback(async (signal?: AbortSignal) => {
     if (!token) return;
     setLoading(true); setLoadError("");
@@ -27,6 +28,13 @@ export function ManageView() {
     finally { if (!signal?.aborted) setLoading(false); }
   }, [token]);
   useEffect(() => { const controller = new AbortController(); void load(controller.signal); return () => controller.abort(); }, [load]);
+  useEffect(() => {
+    if (!token) return;
+    const controller = new AbortController();
+    managementApi.cropCatalog(token, controller.signal).then((data) => { if (!controller.signal.aborted) setCropCatalog(data); }).catch(() => undefined);
+    return () => controller.abort();
+  }, [token]);
+  const suggestedThresholdFor = (crop: string) => cropCatalog.find((entry) => entry.value === crop)?.suggestedHumidityThreshold;
 
   async function run(action: () => Promise<void>, message: string) {
     if (!token || mutation.current) return false;
@@ -47,7 +55,7 @@ export function ManageView() {
       {loadError && <p role="alert" className="rounded-md bg-status-danger-soft p-4 text-status-danger">{loadError}</p>}
       {error && <p role="alert" className="rounded-md bg-status-danger-soft p-4 text-status-danger">{error}</p>}
       {notice && <p role="status" className="rounded-md bg-primary-soft p-4 text-primary">{notice}</p>}
-      {editor?.kind === "parcel" && !editor.id && <ParcelForm busy={busy} onCancel={cancel} onSave={(input) => run(async () => { const parcel = await managementApi.createParcel(token!, input); setParcels((previous) => [parcel, ...previous]); }, "Parcela creada correctamente.")} />}
+      {editor?.kind === "parcel" && !editor.id && <ParcelForm cropCatalog={cropCatalog} busy={busy} onCancel={cancel} onSave={(input) => run(async () => { const parcel = await managementApi.createParcel(token!, input); setParcels((previous) => [parcel, ...previous]); }, "Parcela creada correctamente.")} />}
       {loading && <p role="status">Cargando parcelas…</p>}
       {!loading && !loadError && parcels.length === 0 && <div className="rounded-lg border border-border bg-surface p-6">Aún no tienes parcelas. Crea una parcela y agrega sus zonas para comenzar.</div>}
       {parcels.map((parcel) => <section key={parcel.id} className="space-y-4 rounded-lg border border-border bg-surface p-6">
@@ -56,9 +64,9 @@ export function ManageView() {
           <Button variant="secondary" size="sm" disabled={disabled || editor !== null} onClick={() => edit({ kind: "zone", parcelId: parcel.id })}>+ Nueva zona</Button>
           <Button variant="danger" size="sm" disabled={disabled || editor !== null} onClick={() => { if (window.confirm(`¿Eliminar ${parcel.name} y todas sus zonas? Los dispositivos quedarán sin asignar.`)) void run(async () => { await managementApi.deleteParcel(token!, parcel.id); setParcels((previous) => previous.filter((item) => item.id !== parcel.id)); }, "Parcela eliminada. Los dispositivos quedaron desvinculados."); }}>Eliminar parcela</Button>
         </div></div>
-        {editor?.kind === "parcel" && editor.id === parcel.id && <ParcelForm key={parcel.id} initial={parcel} busy={busy} onCancel={cancel} onSave={(input) => run(async () => { replaceParcel(await managementApi.updateParcel(token!, parcel.id, input)); }, "Parcela actualizada correctamente.")} />}
-        {editor?.kind === "zone" && editor.parcelId === parcel.id && !editor.id && <ZoneForm busy={busy} onCancel={cancel} onSave={(input) => run(async () => { const zone = await managementApi.createZone(token!, parcel.id, input); setParcels((previous) => previous.map((item) => item.id === parcel.id ? { ...item, zones: [...item.zones, zone] } : item)); }, "Zona creada correctamente.")} />}
-        {parcel.zones.length === 0 ? <p className="py-4 text-sm text-ink-muted">Sin zonas configuradas.</p> : <div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead className="border-b border-border text-xs text-ink-muted"><tr><th className="py-3 pr-4">ZONA</th><th className="p-3">UMBRAL OBJETIVO</th><th className="p-3">ACCIONES</th></tr></thead><tbody>{parcel.zones.map((zone) => <tr key={zone.id} className="border-b border-border last:border-0"><td className="py-3 pr-4 font-bold">{zone.name}</td><td className="p-3 text-ink-muted">{zone.humidityThreshold}%</td><td className="p-3"><div className="flex gap-2"><Button variant="secondary" size="sm" disabled={disabled || editor !== null} onClick={() => edit({ kind: "zone", parcelId: parcel.id, id: zone.id })}>Editar zona</Button><Button variant="danger" size="sm" disabled={disabled || editor !== null} onClick={() => { if (window.confirm(`¿Eliminar ${zone.name}? Sus dispositivos quedarán sin asignar.`)) void run(async () => { await managementApi.deleteZone(token!, parcel.id, zone.id); setParcels((previous) => previous.map((item) => item.id === parcel.id ? { ...item, zones: item.zones.filter((existing) => existing.id !== zone.id) } : item)); }, "Zona eliminada correctamente."); }}>Eliminar zona</Button></div></td></tr>)}</tbody></table></div>}
+        {editor?.kind === "parcel" && editor.id === parcel.id && <ParcelForm key={parcel.id} initial={parcel} cropCatalog={cropCatalog} busy={busy} onCancel={cancel} onSave={(input) => run(async () => { replaceParcel(await managementApi.updateParcel(token!, parcel.id, input)); }, "Parcela actualizada correctamente.")} />}
+        {editor?.kind === "zone" && editor.parcelId === parcel.id && !editor.id && <ZoneForm busy={busy} suggestedHumidityThreshold={suggestedThresholdFor(parcel.crop)} onCancel={cancel} onSave={(input) => run(async () => { const zone = await managementApi.createZone(token!, parcel.id, input); setParcels((previous) => previous.map((item) => item.id === parcel.id ? { ...item, zones: [...item.zones, zone] } : item)); }, "Zona creada correctamente.")} />}
+        {parcel.zones.length === 0 ? <p className="py-4 text-sm text-ink-muted">Sin zonas configuradas.</p> : <div className="overflow-x-auto"><table className="w-full text-left text-sm"><thead className="border-b border-border text-xs text-ink-muted"><tr><th className="py-3 pr-4">ZONA</th><th className="p-3">UMBRAL OBJETIVO</th><th className="p-3">SUPERFICIE</th><th className="p-3">ACCIONES</th></tr></thead><tbody>{parcel.zones.map((zone) => <tr key={zone.id} className="border-b border-border last:border-0"><td className="py-3 pr-4 font-bold">{zone.name}</td><td className="p-3 text-ink-muted">{zone.humidityThreshold}%</td><td className="p-3 text-ink-muted">{zone.areaHectares != null ? `${zone.areaHectares} ha` : "—"}</td><td className="p-3"><div className="flex gap-2"><Button variant="secondary" size="sm" disabled={disabled || editor !== null} onClick={() => edit({ kind: "zone", parcelId: parcel.id, id: zone.id })}>Editar zona</Button><Button variant="danger" size="sm" disabled={disabled || editor !== null} onClick={() => { if (window.confirm(`¿Eliminar ${zone.name}? Sus dispositivos quedarán sin asignar.`)) void run(async () => { await managementApi.deleteZone(token!, parcel.id, zone.id); setParcels((previous) => previous.map((item) => item.id === parcel.id ? { ...item, zones: item.zones.filter((existing) => existing.id !== zone.id) } : item)); }, "Zona eliminada correctamente."); }}>Eliminar zona</Button></div></td></tr>)}</tbody></table></div>}
         {editor?.kind === "zone" && editor.parcelId === parcel.id && editor.id && <ZoneForm key={editor.id} initial={parcel.zones.find((zone) => zone.id === editor.id)} busy={busy} onCancel={cancel} onSave={(input) => run(async () => { const zone = await managementApi.updateZone(token!, parcel.id, editor.id!, input); setParcels((previous) => previous.map((item) => item.id === parcel.id ? { ...item, zones: item.zones.map((existing) => existing.id === zone.id ? zone : existing) } : item)); }, "Zona actualizada correctamente.")} />}
       </section>)}
     </div>

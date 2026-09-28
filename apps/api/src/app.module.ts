@@ -10,6 +10,7 @@ import { IrrigationModule } from './modules/irrigation/irrigation.module';
 import { PestModule } from './modules/pest/pest.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { ReportsModule } from './modules/reports/reports.module';
+import { DroneModule } from './modules/drone/drone.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -23,6 +24,7 @@ import { PrismaModule } from './prisma/prisma.module';
     IrrigationModule,
     PestModule,
     ReportsModule,
+    DroneModule,
   ],
   controllers: [AppController],
   providers: [AppService],

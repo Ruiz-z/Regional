@@ -4,3 +4,8 @@ httpx>=0.27
 python-dotenv>=1.0
 ultralytics>=8.3
 opencv-python-headless>=4.10
+# Solo para tf.lite.Interpreter (TeachableMachineClassifier, app/classifier.py).
+# El modelo ya viene convertido a TFLite (app/models/pest_classifier.tflite);
+# tensorflowjs NO es dependencia runtime, es una herramienta de conversión de
+# un solo uso (ver docs/plan o el historial de esta integración).
+tensorflow>=2.16

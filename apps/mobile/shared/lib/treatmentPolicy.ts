@@ -20,5 +20,5 @@ export function canTreat(
   if (input.lastTreatmentAt === undefined) return false;
   if (input.lastTreatmentAt === null) return true;
   const last = Date.parse(input.lastTreatmentAt);
-  return Number.isFinite(last) && now - last >= 600000;
+  return Number.isFinite(last) && now - last >= 60000;
 }

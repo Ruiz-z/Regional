@@ -22,6 +22,7 @@ export interface ZoneDetail {
   size: string;
   targetPct: number;
   temperatureC: number | null;
+  ambientHumidityPct?: number | null;
   irrigation: LabelTone;
   pest: {
     tone: ToneKind;
@@ -33,6 +34,13 @@ export interface ZoneDetail {
   history: ZoneHistoryEvent[];
 }
 
+export interface ParcelWeather {
+  willRain: boolean;
+  rainMm: number;
+  description: string;
+  temperatureC: number;
+}
+
 export interface ParcelDetail {
   id: string;
   name: string;
@@ -42,4 +50,5 @@ export interface ParcelDetail {
   badge: { tone: ToneKind; label: string } | null;
   ownerId: string;
   zones: ZoneDetail[];
+  weather: ParcelWeather | null;
 }

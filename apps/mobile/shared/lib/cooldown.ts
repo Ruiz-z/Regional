@@ -1,8 +1,8 @@
 import { colors } from "@/shared/constants/tokens";
 
-// Cooldown de tratamiento por zona (spec-005 RF-8): 10 minutos desde el
+// Cooldown de tratamiento por zona (spec-005 RF-8): 1 minuto desde el
 // último tratamiento (automático o manual), visible en la UI (RF-9).
-export const TREATMENT_COOLDOWN_MS = 10 * 60_000;
+export const TREATMENT_COOLDOWN_MS = 1 * 60_000;
 
 export interface Cooldown {
   active: boolean;

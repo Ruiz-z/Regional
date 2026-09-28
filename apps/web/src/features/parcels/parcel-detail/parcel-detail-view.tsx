@@ -10,7 +10,9 @@ import { ZoneCell, type ZoneSnapshot } from "@/features/zones/components/zone-ce
 import { ParcelDetail, ZoneDetail } from "@/features/parcels/types";
 import {
   activateZoneTreatment,
+  callDrone,
   getParcelDetail,
+  type DroneCallResult,
 } from "@/features/parcels/lib/api";
 import { ZoneDetailPanel } from "@/features/parcels/parcel-detail/zone-detail-panel";
 import { ZoneHistory } from "@/features/parcels/parcel-detail/zone-history";
@@ -25,6 +27,11 @@ export function ParcelDetailView({ parcelId }: { parcelId: string }) {
   const [treated, setTreated] = React.useState<Record<string, boolean>>({});
   const [treating, setTreating] = React.useState<string | null>(null);
   const [actionError, setActionError] = React.useState<string | null>(null);
+  const [callingDrone, setCallingDrone] = React.useState<string | null>(null);
+  const [droneResults, setDroneResults] = React.useState<
+    Record<string, DroneCallResult>
+  >({});
+  const [droneError, setDroneError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     let alive = true;
@@ -100,6 +107,24 @@ export function ParcelDetailView({ parcelId }: { parcelId: string }) {
     }
   };
 
+  const handleCallDrone = async (zone: ZoneDetail) => {
+    if (!token || callingDrone) {
+      return;
+    }
+    setDroneError(null);
+    setCallingDrone(zone.id);
+    try {
+      const result = await callDrone(zone.id, token);
+      setDroneResults((prev) => ({ ...prev, [zone.id]: result }));
+    } catch (err: unknown) {
+      setDroneError(
+        err instanceof Error ? err.message : "No se pudo llamar al dron.",
+      );
+    } finally {
+      setCallingDrone(null);
+    }
+  };
+
   return (
     <>
       <header className="flex-none border-b border-border px-8 pb-5 pt-6">
@@ -118,11 +143,20 @@ export function ParcelDetailView({ parcelId }: { parcelId: string }) {
               {parcel.crop} · {parcel.area} · {parcel.zonesCount} zonas
             </p>
           </div>
-          {parcel.badge ? (
-            <ToneBadge tone={parcel.badge.tone}>
-              {parcel.badge.label}
-            </ToneBadge>
-          ) : null}
+          <div className="flex items-center gap-2">
+            {parcel.weather ? (
+              <ToneBadge tone={parcel.weather.willRain ? "info" : "ok"}>
+                {parcel.weather.willRain ? "🌧️" : "☀️"}{" "}
+                {parcel.weather.description} ·{" "}
+                {Math.round(parcel.weather.temperatureC)}°C
+              </ToneBadge>
+            ) : null}
+            {parcel.badge ? (
+              <ToneBadge tone={parcel.badge.tone}>
+                {parcel.badge.label}
+              </ToneBadge>
+            ) : null}
+          </div>
         </div>
       </header>
 
@@ -155,6 +189,10 @@ export function ParcelDetailView({ parcelId }: { parcelId: string }) {
               treated={treated[selectedZone.id] === true}
               actionError={actionError}
               onActivate={() => handleActivate(selectedZone)}
+              callingDrone={callingDrone === selectedZone.id}
+              droneResult={droneResults[selectedZone.id] ?? null}
+              droneError={droneError}
+              onCallDrone={() => handleCallDrone(selectedZone)}
             />
           ) : null}
           {selectedZone ? <ZoneHistory events={selectedZone.history} /> : null}

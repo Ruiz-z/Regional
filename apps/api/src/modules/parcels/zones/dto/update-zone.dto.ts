@@ -18,4 +18,9 @@ export class UpdateZoneDto {
   @Min(0)
   @Max(100)
   humidityThreshold?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  areaHectares?: number;
 }
