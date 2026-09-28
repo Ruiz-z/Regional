@@ -5,12 +5,16 @@ import { NotificationsService } from '../../notifications/notifications.service'
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
-  let prisma: { user: { create: jest.Mock; findUnique: jest.Mock } };
+  let prisma: {
+    user: { create: jest.Mock; findUnique: jest.Mock; findMany: jest.Mock };
+  };
   let notifications: { sendWelcomeEmail: jest.Mock };
   let service: UsersService;
 
   beforeEach(() => {
-    prisma = { user: { create: jest.fn(), findUnique: jest.fn() } };
+    prisma = {
+      user: { create: jest.fn(), findUnique: jest.fn(), findMany: jest.fn() },
+    };
     notifications = { sendWelcomeEmail: jest.fn() };
     service = new UsersService(
       prisma as unknown as PrismaService,
@@ -70,6 +74,26 @@ describe('UsersService', () => {
     await expect(
       service.create({ email: 'a@a.com', password: '12345678' }),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('findAll lista los usuarios reales sin passwordHash', async () => {
+    prisma.user.findMany.mockResolvedValue([
+      { id: 'u-1', email: 'a@a.com', role: UserRole.AGRICULTOR },
+    ]);
+    const users = await service.findAll();
+    expect(prisma.user.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: undefined }),
+    );
+    expect(users).toHaveLength(1);
+    expect((users[0] as { passwordHash?: string }).passwordHash).toBeUndefined();
+  });
+
+  it('findAll filtra por rol cuando se pide', async () => {
+    prisma.user.findMany.mockResolvedValue([]);
+    await service.findAll(UserRole.AGRICULTOR);
+    expect(prisma.user.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { role: UserRole.AGRICULTOR } }),
+    );
   });
 
   it('findById devuelve el usuario real sin el passwordHash', async () => {

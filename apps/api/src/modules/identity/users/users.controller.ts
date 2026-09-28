@@ -28,6 +28,12 @@ export class UsersController {
     return this.usersService.create(dto);
   }
 
+  @Get()
+  @Roles(UserRole.ADMIN)
+  findAll() {
+    return this.usersService.findAll();
+  }
+
   @Get('me')
   me(@CurrentUser() user: AuthUser) {
     return this.usersService.findById(user.userId);

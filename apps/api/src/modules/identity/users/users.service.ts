@@ -27,6 +27,14 @@ export class UsersService {
     private readonly notifications: NotificationsService,
   ) {}
 
+  async findAll(role?: UserRole): Promise<SafeUser[]> {
+    return this.prisma.user.findMany({
+      where: role ? { role } : undefined,
+      select: SAFE_USER_SELECT,
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
   async findById(userId: string): Promise<SafeUser> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
