@@ -24,6 +24,8 @@ export function ZoneDetailScreen() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(new Date());
+  const [callingDrone, setCallingDrone] = useState(false);
+  const [deployingServo, setDeployingServo] = useState(false);
   const load = useCallback(async () => {
     try {
       setError("");
@@ -85,6 +87,46 @@ export function ZoneDetailScreen() {
       );
     } finally {
       setBusy(false);
+    }
+  }
+  async function callDrone() {
+    if (!id || callingDrone) return;
+    setCallingDrone(true);
+    try {
+      const res = await api.post<{ detected: boolean; confidence: number | null }>(
+        `/zones/${encodeURIComponent(id)}/call-drone`,
+      );
+      Alert.alert(
+        "Dron: resultado",
+        res.detected
+          ? `Plaga detectada (confianza ${Math.round((res.confidence ?? 0) * 100)}%).`
+          : "Sin plaga detectada en esta pasada.",
+      );
+    } catch (e) {
+      Alert.alert(
+        "No se pudo llamar al dron",
+        e instanceof Error ? e.message : "Error inesperado",
+      );
+    } finally {
+      setCallingDrone(false);
+    }
+  }
+  async function deployServo() {
+    if (!id || deployingServo) return;
+    setDeployingServo(true);
+    try {
+      await api.post(`/zones/${encodeURIComponent(id)}/deploy-drone-servo`);
+      Alert.alert(
+        "Servo solicitado",
+        "El dron va a activarse en el próximo ciclo del dispositivo (hasta 4s).",
+      );
+    } catch (e) {
+      Alert.alert(
+        "No se pudo activar el servo",
+        e instanceof Error ? e.message : "Error inesperado",
+      );
+    } finally {
+      setDeployingServo(false);
     }
   }
   return (
@@ -153,6 +195,18 @@ export function ZoneDetailScreen() {
                     último tratamiento.
                   </Text>
                 )}
+                <Button
+                  title="🚁 Llamar dron"
+                  variant="secondary"
+                  loading={callingDrone}
+                  onPress={() => void callDrone()}
+                />
+                <Button
+                  title="⚙️ Activar servo del dron"
+                  variant="secondary"
+                  loading={deployingServo}
+                  onPress={() => void deployServo()}
+                />
               </>
             )}
           </>

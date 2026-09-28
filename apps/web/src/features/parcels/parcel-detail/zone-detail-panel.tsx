@@ -6,6 +6,7 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { ToneBadge } from "@/shared/components/ui/tone-badge";
 import type { ZoneDetail } from "@/features/parcels/types";
+import type { DroneCallResult } from "@/features/parcels/lib/api";
 import { MoistureMeter } from "@/features/parcels/parcel-detail/moisture-meter";
 
 function pestIcon(tone: ZoneDetail["pest"]["tone"]) {
@@ -46,6 +47,10 @@ export function ZoneDetailPanel({
   treated,
   actionError,
   onActivate,
+  callingDrone,
+  droneResult,
+  droneError,
+  onCallDrone,
 }: {
   zone: ZoneDetail;
   canTreat: boolean;
@@ -53,6 +58,10 @@ export function ZoneDetailPanel({
   treated: boolean;
   actionError: string | null;
   onActivate: () => void;
+  callingDrone: boolean;
+  droneResult: DroneCallResult | null;
+  droneError: string | null;
+  onCallDrone: () => void;
 }) {
   const inServerCooldown = zone.cooldownUntil !== null;
   const humidity = zone.cell.humidityPct;
@@ -90,6 +99,13 @@ export function ZoneDetailPanel({
         </span>
       </div>
 
+      {zone.ambientHumidityPct != null ? (
+        <div className="flex items-baseline gap-1.5 text-[14px]">
+          <span className="font-bold text-ink-muted">Humedad ambiente</span>
+          <span className="font-mono font-bold">{zone.ambientHumidityPct}%</span>
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap gap-2">
         <ToneBadge tone={zone.irrigation.tone}>{zone.irrigation.label}</ToneBadge>
         <ToneBadge tone={zone.pest.tone}>
@@ -126,7 +142,7 @@ export function ZoneDetailPanel({
                   strokeLinejoin="round"
                 />
               </svg>
-              Tratamiento activado · cooldown 10 min
+              Tratamiento activado · cooldown 1 min
             </div>
           ) : (
             <Button
@@ -151,8 +167,30 @@ export function ZoneDetailPanel({
 
           {inServerCooldown && zone.pestState !== "NORMAL" ? (
             <p className="m-0 text-[12px] text-ink-muted">
-              En cooldown: el tratamiento manual se puede reutilizar cada 10
-              minutos.
+              En cooldown: el tratamiento manual se puede reutilizar cada 1
+              minuto.
+            </p>
+          ) : null}
+
+          <Button
+            variant="secondary"
+            size="lg"
+            disabled={callingDrone}
+            onClick={onCallDrone}
+            className="justify-center"
+          >
+            {callingDrone ? "Llamando dron…" : "🚁 Llamar dron"}
+          </Button>
+          {droneError ? (
+            <p className="m-0 text-[13px] font-semibold text-status-danger">
+              {droneError}
+            </p>
+          ) : null}
+          {droneResult ? (
+            <p className="m-0 text-[12px] text-ink-muted">
+              {droneResult.detected
+                ? `Plaga detectada (confianza ${Math.round((droneResult.confidence ?? 0) * 100)}%).`
+                : "Sin plaga detectada en esta pasada."}
             </p>
           ) : null}
         </div>

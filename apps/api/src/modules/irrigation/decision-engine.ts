@@ -11,6 +11,8 @@ export interface DecisionInput {
   threshold: number;
   forecast: WeatherForecast | null;
   modelScore: number;
+  areaHectares?: number | null;
+  efficiencyPerMinute?: number | null;
 }
 
 export interface DecisionReason {
@@ -31,14 +33,34 @@ export interface DecisionResult {
 const MIN_DURATION_MINUTES = 5;
 const MAX_DURATION_MINUTES = 30;
 
+export interface DurationOptions {
+  // Puntos de humedad ganados por minuto regado, promediados de los
+  // riegos pasados reales de la zona (ver
+  // IrrigationService.calcZoneEfficiency). Sin historial suficiente, se
+  // usa el fallback fijo de siempre (deficit / 2).
+  efficiencyPerMinute?: number | null;
+  // Superficie real de la zona: a más hectáreas, más tiempo para la misma
+  // cobertura (mismo caudal fijo asumido). Sin dato, factor neutro (1x).
+  areaHectares?: number | null;
+}
+
 export const calcDurationMinutes = (
   humidity: number,
   threshold: number,
+  options: DurationOptions = {},
 ): number => {
   const deficit = threshold - humidity;
+  const baseMinutes =
+    options.efficiencyPerMinute && options.efficiencyPerMinute > 0
+      ? deficit / options.efficiencyPerMinute
+      : deficit / 2;
+  const areaFactor =
+    options.areaHectares && options.areaHectares > 0
+      ? options.areaHectares
+      : 1;
   return Math.min(
     MAX_DURATION_MINUTES,
-    Math.max(MIN_DURATION_MINUTES, Math.round(deficit / 2)),
+    Math.max(MIN_DURATION_MINUTES, Math.round(baseMinutes * areaFactor)),
   );
 };
 
@@ -47,6 +69,8 @@ export const decide = ({
   threshold,
   forecast,
   modelScore,
+  areaHectares,
+  efficiencyPerMinute,
 }: DecisionInput): DecisionResult => {
   const baseReason = { humidity, threshold, forecast, modelScore };
 
@@ -70,7 +94,10 @@ export const decide = ({
 
   return {
     decision: IrrigationDecision.REGAR,
-    durationMinutes: calcDurationMinutes(humidity, threshold),
+    durationMinutes: calcDurationMinutes(humidity, threshold, {
+      areaHectares,
+      efficiencyPerMinute,
+    }),
     reason: { ...baseReason, motivo: 'humedad_baja' },
     esperaPorLluvia: false,
   };

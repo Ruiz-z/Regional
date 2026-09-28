@@ -6,6 +6,7 @@ describe('ParcelsService', () => {
   let prisma: {
     parcel: {
       findMany: jest.Mock;
+      findUniqueOrThrow: jest.Mock;
       create: jest.Mock;
       update: jest.Mock;
       delete: jest.Mock;
@@ -13,12 +14,14 @@ describe('ParcelsService', () => {
     device: { updateMany: jest.Mock };
     $transaction: jest.Mock;
   };
+  let weather: { getForecast: jest.Mock };
   let service: ParcelsService;
 
   beforeEach(() => {
     prisma = {
       parcel: {
         findMany: jest.fn(),
+        findUniqueOrThrow: jest.fn(),
         create: jest.fn(),
         update: jest.fn(),
         delete: jest.fn(),
@@ -26,9 +29,11 @@ describe('ParcelsService', () => {
       device: { updateMany: jest.fn() },
       $transaction: jest.fn((ops: unknown[]) => Promise.all(ops)),
     };
+    weather = { getForecast: jest.fn().mockResolvedValue(null) };
     service = new ParcelsService(
       prisma as unknown as PrismaService,
       { attach: (zones: unknown) => Promise.resolve(zones) } as never,
+      weather as never,
     );
   });
 
@@ -70,6 +75,28 @@ describe('ParcelsService', () => {
         ownerId: 'u-9',
       },
       include: { zones: true },
+    });
+  });
+
+  it('en detalle, pide el pronóstico con el location de la parcela y lo incluye en la respuesta', async () => {
+    prisma.parcel.findUniqueOrThrow.mockResolvedValue({
+      id: 'p-1',
+      location: 'Guanajuato, MX',
+      zones: [],
+    });
+    weather.getForecast.mockResolvedValue({
+      willRain: true,
+      rainMm: 2,
+      description: 'lluvia ligera',
+      temperatureC: 22.4,
+    });
+    const result = await service.findOne('p-1');
+    expect(weather.getForecast).toHaveBeenCalledWith('Guanajuato, MX');
+    expect(result.weather).toEqual({
+      willRain: true,
+      rainMm: 2,
+      description: 'lluvia ligera',
+      temperatureC: 22.4,
     });
   });
 

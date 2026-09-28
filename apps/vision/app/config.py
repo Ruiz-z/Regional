@@ -2,6 +2,13 @@ import json
 import os
 from dataclasses import dataclass, field
 
+from dotenv import load_dotenv
+
+# Sin esto, python-dotenv nunca carga .env y todos los os.getenv() de abajo
+# devuelven sus defaults (puerto equivocado, sin API key, ZONE_MAP vacío) —
+# el servicio corre "silencioso" sin reportar nada y sin ningún error visible.
+load_dotenv()
+
 
 def _parse_zone_map(raw: str) -> dict[tuple[int, int], str]:
     """ZONE_MAP viene como JSON {"fila,col": "zoneId"} — mapeo fijo de
@@ -30,9 +37,25 @@ class Settings:
         os.getenv("CAPTURE_INTERVAL_SECONDS", "5")
     )
     weights_path: str = os.getenv("YOLO_WEIGHTS_PATH", "yolo11n.pt")
+    # "classifier" (Teachable Machine, default) o "yolo" (detector real por
+    # cajas, cuando exista un modelo entrenado propio).
+    model_backend: str = os.getenv("MODEL_BACKEND", "classifier")
+    classifier_model_path: str = os.getenv(
+        "CLASSIFIER_MODEL_PATH", "app/models/pest_classifier.tflite"
+    )
+    classifier_labels_path: str = os.getenv(
+        "CLASSIFIER_LABELS_PATH", "app/models/labels.txt"
+    )
     zone_map: dict[tuple[int, int], str] = field(
         default_factory=lambda: _parse_zone_map(os.getenv("ZONE_MAP", ""))
     )
+    # Botón "Llamar dron" (POST /detect): autentica la llamada backend -> acá.
+    # Sin valor, /detect rechaza siempre (falla cerrado, mismo criterio que
+    # CronSecretGuard del lado del backend).
+    internal_secret: str = os.getenv("VISION_INTERNAL_SECRET", "")
+    # Cámara USB (distinta de la cámara 0, que ya usa el loop continuo de
+    # run_camera.py para Zona 1).
+    on_demand_camera_index: int = int(os.getenv("ON_DEMAND_CAMERA_INDEX", "1"))
 
 
 settings = Settings()

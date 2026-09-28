@@ -40,7 +40,12 @@ describe('ZoneStatusService', () => {
     expect(prisma.reading.findFirst).toHaveBeenCalledWith({
       where: { zoneId: 'zone-a' },
       orderBy: { createdAt: 'desc' },
-      select: { humidity: true, temperature: true, createdAt: true },
+      select: {
+        humidity: true,
+        temperature: true,
+        ambientHumidity: true,
+        createdAt: true,
+      },
     });
   });
 
