@@ -8,6 +8,7 @@ export interface ZoneWithStatus extends Zone {
   latestReading: {
     humidity: number;
     temperature: number;
+    ambientHumidity: number | null;
     createdAt: Date;
   } | null;
   pestLevel: PestLevel;
@@ -31,7 +32,12 @@ export class ZoneStatusService {
         const latestReading = await this.prisma.reading.findFirst({
           where: { zoneId: zone.id },
           orderBy: { createdAt: 'desc' },
-          select: { humidity: true, temperature: true, createdAt: true },
+          select: {
+            humidity: true,
+            temperature: true,
+            ambientHumidity: true,
+            createdAt: true,
+          },
         });
         return {
           ...zone,

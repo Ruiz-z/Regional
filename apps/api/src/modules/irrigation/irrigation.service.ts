@@ -9,10 +9,15 @@ import { CreateReadingDto } from './dto/create-reading.dto';
 import { calcDurationMinutes, decide, getModelScore } from './decision-engine';
 
 // Heurística de "lluvia suficiente" para RF-8: sin un dato oficial de mm
-// esperados por parte de OpenWeather-por-ubicación, se usa un umbral fijo de
+// esperados por parte de Open-Meteo-por-ubicación, se usa un umbral fijo de
 // incremento de humedad entre ciclos (documentado, ajustable a futuro).
 const EXPECTED_RAIN_HUMIDITY_INCREASE = 5;
 const CONSECUTIVE_REGAR_FOR_ANOMALY = 3;
+// Auto-calibración por zona ("aprendizaje" sin ML, ver decision-engine.ts):
+// cuántos riegos pasados se consideran y el mínimo de muestras válidas
+// antes de confiar en el promedio real en vez del fallback fijo.
+const EFFICIENCY_SAMPLE_SIZE = 5;
+const MIN_EFFICIENCY_SAMPLES = 3;
 
 interface EventReason {
   humidity: number;
@@ -59,6 +64,7 @@ export class IrrigationService {
         zoneId,
         humidity: dto.humidity,
         temperature: dto.temperature,
+        ambientHumidity: dto.ambientHumidity,
       },
     });
 
@@ -72,11 +78,13 @@ export class IrrigationService {
           zoneId,
           zone.parcel.ownerId,
         );
+        const efficiencyPerMinute = await this.calcZoneEfficiency(zoneId);
         return {
           decision: IrrigationDecision.REGAR,
           durationMinutes: calcDurationMinutes(
             dto.humidity,
             zone.humidityThreshold,
+            { areaHectares: zone.areaHectares, efficiencyPerMinute },
           ),
           reason: {
             humidity: dto.humidity,
@@ -99,11 +107,14 @@ export class IrrigationService {
     }
 
     const forecast = await this.weather.getForecast(zone.parcel.location);
+    const efficiencyPerMinute = await this.calcZoneEfficiency(zoneId);
     const result = decide({
       humidity: dto.humidity,
       threshold: zone.humidityThreshold,
       forecast,
       modelScore: getModelScore(),
+      areaHectares: zone.areaHectares,
+      efficiencyPerMinute,
     });
 
     if (result.esperaPorLluvia) {
@@ -179,5 +190,42 @@ export class IrrigationService {
       const reason = event.reason as unknown as EventReason;
       return reason.humidity <= prevReason.humidity;
     });
+  }
+
+  // "Aprendizaje" sin ML (ver decision-engine.ts): promedia cuántos puntos
+  // de humedad subió realmente por minuto regado en los últimos riegos de
+  // la zona, usando el mismo `reason` que ya guarda cada irrigation_event
+  // ({humidity, previousHumidity}). Menos de MIN_EFFICIENCY_SAMPLES
+  // muestras válidas -> null (cold start, decision-engine cae al fallback
+  // fijo deficit/2).
+  private async calcZoneEfficiency(zoneId: string): Promise<number | null> {
+    const events = await this.prisma.irrigationEvent.findMany({
+      where: { zoneId, decision: IrrigationDecision.REGAR },
+      orderBy: { createdAt: 'desc' },
+      take: EFFICIENCY_SAMPLE_SIZE,
+    });
+
+    const samples = events
+      .map((event) => ({
+        reason: event.reason as unknown as EventReason,
+        durationMinutes: event.durationMinutes,
+      }))
+      .filter(
+        (sample) =>
+          sample.reason.previousHumidity !== null &&
+          sample.durationMinutes !== null &&
+          sample.durationMinutes > 0 &&
+          sample.reason.humidity > sample.reason.previousHumidity,
+      )
+      .map(
+        (sample) =>
+          (sample.reason.humidity - sample.reason.previousHumidity!) /
+          sample.durationMinutes!,
+      );
+
+    if (samples.length < MIN_EFFICIENCY_SAMPLES) {
+      return null;
+    }
+    return samples.reduce((sum, value) => sum + value, 0) / samples.length;
   }
 }

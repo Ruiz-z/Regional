@@ -199,4 +199,63 @@ describe('IrrigationService', () => {
     });
     expect(result.anomalyDetected).toBe(false);
   });
+
+  it('sin historial de riegos, usa la fórmula fija (deficit/2)', async () => {
+    prisma.zone.findUnique.mockResolvedValue(zoneA);
+    prisma.irrigationEvent.findMany.mockResolvedValue([]); // cold start
+    const result = await service.recordReading('zone-a', {
+      humidity: 30, // threshold 50 -> deficit 20 -> 20/2 = 10
+      temperature: 20,
+    });
+    expect(result.durationMinutes).toBe(10);
+  });
+
+  it('con >=3 riegos pasados válidos, usa la eficiencia real de la zona en vez de la fórmula fija', async () => {
+    prisma.zone.findUnique.mockResolvedValue(zoneA);
+    // 3 riegos con incremento real de 20 puntos en 5 min -> eficiencia 4/min.
+    prisma.irrigationEvent.findMany.mockResolvedValue([
+      {
+        reason: { humidity: 40, previousHumidity: 20 },
+        durationMinutes: 5,
+      },
+      {
+        reason: { humidity: 42, previousHumidity: 22 },
+        durationMinutes: 5,
+      },
+      {
+        reason: { humidity: 38, previousHumidity: 18 },
+        durationMinutes: 5,
+      },
+    ]);
+    const result = await service.recordReading('zone-a', {
+      humidity: 30, // threshold 50 -> deficit 20 -> 20 / 4 (eficiencia) = 5
+      temperature: 20,
+    });
+    expect(result.durationMinutes).toBe(5);
+  });
+
+  it('descarta muestras inválidas (previousHumidity null, duración 0, sin incremento) y cae al fallback si quedan <3', async () => {
+    prisma.zone.findUnique.mockResolvedValue(zoneA);
+    prisma.irrigationEvent.findMany.mockResolvedValue([
+      { reason: { humidity: 40, previousHumidity: null }, durationMinutes: 5 },
+      { reason: { humidity: 40, previousHumidity: 20 }, durationMinutes: 0 },
+      { reason: { humidity: 20, previousHumidity: 25 }, durationMinutes: 5 }, // bajó, no sirve
+      { reason: { humidity: 42, previousHumidity: 22 }, durationMinutes: 5 }, // única válida
+    ]);
+    const result = await service.recordReading('zone-a', {
+      humidity: 30, // solo 1 muestra válida (<3) -> fallback deficit/2 = 10
+      temperature: 20,
+    });
+    expect(result.durationMinutes).toBe(10);
+  });
+
+  it('con areaHectares en la zona, escala la duración de riego proporcionalmente', async () => {
+    prisma.zone.findUnique.mockResolvedValue({ ...zoneA, areaHectares: 2 });
+    prisma.irrigationEvent.findMany.mockResolvedValue([]); // cold start
+    const result = await service.recordReading('zone-a', {
+      humidity: 40, // threshold 50 -> deficit 10 -> 10/2=5 base * 2ha = 10
+      temperature: 20,
+    });
+    expect(result.durationMinutes).toBe(10);
+  });
 });
