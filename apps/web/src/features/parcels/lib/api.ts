@@ -4,13 +4,14 @@ import { isMocksEnabled } from "@/features/dashboard/lib/api";
 import type { ZoneSnapshot, ZoneTone } from "@/features/zones/components/zone-cell";
 import type {
   ParcelDetail,
+  ParcelWeather,
   ZoneDetail,
   ZoneHistoryEvent,
   ZonePestState,
 } from "@/features/parcels/types";
 import { PARCELS_MOCK } from "@/features/parcels/lib/mock-data";
 
-const PARCEL_TREATMENT_COOLDOWN_MS = 10 * 60 * 1000;
+const PARCEL_TREATMENT_COOLDOWN_MS = 1 * 60 * 1000;
 const RECENT_DAYS = 7;
 
 export interface TreatmentResult {
@@ -24,9 +25,11 @@ interface ApiZone {
   id: string;
   name: string;
   humidityThreshold: number;
+  areaHectares: number | null;
   latestReading: {
     humidity: number;
     temperature: number;
+    ambientHumidity: number | null;
     createdAt: string;
   } | null;
   pestLevel: ZonePestState;
@@ -40,6 +43,7 @@ interface ApiParcel {
   location: string;
   ownerId: string;
   zones: ApiZone[];
+  weather: ParcelWeather | null;
 }
 
 interface ApiIrrigationEvent {
@@ -118,9 +122,10 @@ function toZoneDetail(
   return {
     id: zone.id,
     cell,
-    size: "—",
+    size: zone.areaHectares !== null ? `${zone.areaHectares} ha` : "—",
     targetPct: zone.humidityThreshold,
     temperatureC: zone.latestReading?.temperature ?? null,
+    ambientHumidityPct: zone.latestReading?.ambientHumidity ?? null,
     irrigation: tone === "water" ? { tone: "water", label: "Regando" } : { tone: "ok", label: "Normal" },
     pest,
     pestState: zone.pestLevel,
@@ -162,6 +167,7 @@ async function fetchRealParcelDetail(
     badge,
     ownerId: parcel.ownerId,
     zones: parcel.zones.map((zone) => toZoneDetail(zone, historyByZone.get(zone.id))),
+    weather: parcel.weather,
   };
 }
 
@@ -217,6 +223,31 @@ export async function activateZoneTreatment(
     activatedAt: new Date(now).toISOString(),
     cooldownUntil: new Date(now + PARCEL_TREATMENT_COOLDOWN_MS).toISOString(),
   };
+}
+
+export interface DroneCallResult {
+  detected: boolean;
+  confidence: number | null;
+}
+
+export async function callDrone(
+  zoneId: string,
+  token?: string,
+): Promise<DroneCallResult> {
+  const authToken = token ?? window.localStorage.getItem(AUTH_TOKEN_KEY);
+  if (!authToken) {
+    throw new Error("No hay sesión activa");
+  }
+
+  if (isMocksEnabled()) {
+    return { detected: Math.random() > 0.5, confidence: 0.82 };
+  }
+
+  return apiFetch<DroneCallResult>(
+    `/zones/${encodeURIComponent(zoneId)}/call-drone`,
+    { method: "POST" },
+    authToken,
+  );
 }
 
 export function isZoneInCooldown(cooldownUntil: string | null): boolean {

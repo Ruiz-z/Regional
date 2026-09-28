@@ -16,6 +16,7 @@ export const PARCELS_MOCK: Record<string, RawParcelDetail> = {
     zonesCount: 6,
     badge: { tone: "danger", label: "1 zona en intervención" },
     ownerId: MOCK_OWNER_ID,
+    weather: { willRain: false, rainMm: 0, description: "despejado", temperatureC: 28.5 },
     zones: [
       {
         cell: { id: "norte-a1", name: "A1", humidityPct: 58, statusLabel: "Regando", tone: "water" },
@@ -108,6 +109,7 @@ export const PARCELS_MOCK: Record<string, RawParcelDetail> = {
     zonesCount: 6,
     badge: { tone: "ok", label: "Todo normal" },
     ownerId: MOCK_OWNER_ID,
+    weather: { willRain: true, rainMm: 1.5, description: "lluvia ligera", temperatureC: 21.2 },
     zones: [
       { cell: { id: "sur-c1", name: "C1", humidityPct: 55, statusLabel: "Normal", tone: "ok" }, size: "0.4 ha", targetPct: 45, temperatureC: 27.0, irrigation: { tone: "ok", label: "Riego: Normal" }, pest: { tone: "ok", label: "Plaga: Normal" }, pestState: "NORMAL", cooldownUntil: null, history: [] },
       { cell: { id: "sur-c2", name: "C2", humidityPct: null, statusLabel: "Sin lectura", tone: "off" }, size: "0.4 ha", targetPct: 45, temperatureC: null, irrigation: { tone: "off", label: "Riego: Sin lectura" }, pest: { tone: "ok", label: "Plaga: Normal" }, pestState: "NORMAL", cooldownUntil: null, history: [] },
